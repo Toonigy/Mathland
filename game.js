@@ -87,13 +87,8 @@ function resetGame() {
     levelDisplay.innerText = "Level: 1";
 }
 
-// Game Events (Simulate taking damage and leveling up)
+// Game Events (Simulate leveling up)
 function simulateGameEvents() {
-    // Take damage every 2 seconds
-    setInterval(() => {
-        updateHealth(-10); // Reduce health by 10%
-    }, 2000);
-
     // Level up every 10 seconds
     setInterval(() => {
         updateLevel();
