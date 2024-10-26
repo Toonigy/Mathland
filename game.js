@@ -1,10 +1,17 @@
 // Select UI Elements
 const gameCanvas = document.getElementById("gameCanvas");
 const gameCtx = gameCanvas.getContext("2d");
-const bgm = document.getElementById("bgm"); // Select the audio element
-const toggleMusicBtn = document.getElementById("toggle-music-btn"); // Select the toggle button
-const settingsBtn = document.getElementById("settings-btn"); // Select the settings button
-const backpackBtn = document.getElementById("backpack-btn"); // Select the backpack button
+const bgm = document.getElementById("bgm");
+const toggleMusicBtn = document.getElementById("toggle-music-btn");
+const settingsBtn = document.getElementById("settings-btn");
+const backpackBtn = document.getElementById("backpack-btn");
+
+// Battle Variables
+let playerHealth = 100;
+let enemyHealth = 100;
+let currentEnemy;
+let mathProblem;
+let correctAnswer;
 
 // Avatar Data
 const avatarData = JSON.parse(localStorage.getItem("avatar")) || {
@@ -53,11 +60,80 @@ function drawAvatar() {
 function initGame() {
     drawAvatar();
     initUI(); // Initialize the UI
-
-    // Add event listener for the toggle music button
     toggleMusicBtn.addEventListener("click", toggleMusic);
     settingsBtn.addEventListener("click", openSettings);
     backpackBtn.addEventListener("click", openBackpack);
+    
+    // Start the game when page loads
+    document.getElementById("start-battle-btn").addEventListener("click", startBattle);
+}
+
+// Start the battle
+function startBattle() {
+    document.getElementById("battle-ui").style.display = "block";
+    currentEnemy = {
+        name: "Goblin",
+        health: 100,
+    };
+    enemyHealth = currentEnemy.health;
+    updateHealthBars();
+    generateMathProblem();
+}
+
+// Update health bars
+function updateHealthBars() {
+    document.getElementById("enemy-health-bar").style.width = enemyHealth + "%";
+    document.getElementById("player-health-bar").style.width = playerHealth + "%";
+}
+
+// Generate a math problem
+function generateMathProblem() {
+    const num1 = Math.floor(Math.random() * 10) + 1; // Random number 1-10
+    const num2 = Math.floor(Math.random() * 10) + 1; // Random number 1-10
+    const operator = Math.random() > 0.5 ? '+' : '-';
+    mathProblem = `${num1} ${operator} ${num2}`;
+    correctAnswer = eval(mathProblem); // Use eval cautiously in production
+    document.getElementById("math-question").innerText = `Solve: ${mathProblem}`;
+}
+
+// Handle answer submission
+document.getElementById("submit-answer").addEventListener("click", () => {
+    const playerAnswer = parseInt(document.getElementById("math-answer").value);
+    if (playerAnswer === correctAnswer) {
+        // Correct answer
+        enemyHealth -= 20; // Damage enemy
+        document.getElementById("battle-log").innerText = "Correct! You dealt 20 damage.";
+    } else {
+        // Incorrect answer
+        playerHealth -= 10; // Damage player
+        document.getElementById("battle-log").innerText = "Wrong answer! You took 10 damage.";
+    }
+    updateHealthBars();
+    checkBattleOutcome();
+    generateMathProblem(); // Generate new problem
+});
+
+// Heal button functionality
+document.getElementById("heal-button").addEventListener("click", () => {
+    playerHealth += 20; // Heal player
+    if (playerHealth > 100) playerHealth = 100; // Cap at 100
+    playerHealth -= 5; // Heal incurs some damage due to enemy attack
+    document.getElementById("battle-log").innerText = "You healed 20 health but took 5 damage!";
+    updateHealthBars();
+    checkBattleOutcome();
+});
+
+// Check for battle outcome
+function checkBattleOutcome() {
+    if (enemyHealth <= 0) {
+        document.getElementById("battle-log").innerText = "You defeated the enemy!";
+        document.getElementById("battle-ui").style.display = "none"; // Hide battle UI
+        playerHealth = 100; // Reset player health for next battle
+        updateHealthBars();
+    } else if (playerHealth <= 0) {
+        document.getElementById("battle-log").innerText = "You have been defeated!";
+        document.getElementById("battle-ui").style.display = "none"; // Hide battle UI
+    }
 }
 
 // Play Background Music
