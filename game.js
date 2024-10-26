@@ -3,6 +3,8 @@ const gameCanvas = document.getElementById("gameCanvas");
 const gameCtx = gameCanvas.getContext("2d");
 const bgm = document.getElementById("bgm"); // Select the audio element
 const toggleMusicBtn = document.getElementById("toggle-music-btn"); // Select the toggle button
+const settingsBtn = document.getElementById("settings-btn"); // Select the settings button
+const backpackBtn = document.getElementById("backpack-btn"); // Select the backpack button
 
 // Avatar Data
 const avatarData = JSON.parse(localStorage.getItem("avatar")) || {
@@ -54,6 +56,8 @@ function initGame() {
 
     // Add event listener for the toggle music button
     toggleMusicBtn.addEventListener("click", toggleMusic);
+    settingsBtn.addEventListener("click", openSettings);
+    backpackBtn.addEventListener("click", openBackpack);
 }
 
 // Play Background Music
@@ -74,6 +78,16 @@ function toggleMusic() {
         toggleMusicBtn.innerText = "Mute Music";
     }
     isMusicPlaying = !isMusicPlaying; // Toggle the state
+}
+
+// Open Settings
+function openSettings() {
+    alert("Settings menu opened."); // Placeholder for settings functionality
+}
+
+// Open Backpack
+function openBackpack() {
+    alert("Backpack opened."); // Placeholder for backpack functionality
 }
 
 // Start the game when the page loads
