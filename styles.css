@@ -70,3 +70,34 @@ canvas {
     border: 1px solid #000;
     background-color: #eee;
 }
+/* UI Container */
+.game-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 400px;
+    margin: 10px auto;
+}
+
+/* Health Bar Styling */
+.health-container {
+    width: 60%;
+    background-color: #ddd;
+    border: 1px solid #000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#health-bar {
+    width: 100%; /* Full health initially */
+    height: 20px;
+    background-color: #4CAF50; /* Green color for health */
+}
+
+/* Level Display Styling */
+#level-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: right;
+    color: #333;
+}
