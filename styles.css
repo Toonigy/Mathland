@@ -50,8 +50,23 @@ button:hover {
 #guestButton:hover {
     background-color: #0056b3;
 }
-}
 
 #loginMessage {
     color: red;
+}
+
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+label, input, select, button {
+    margin: 10px;
+}
+
+canvas {
+    border: 1px solid #000;
+    background-color: #eee;
 }
