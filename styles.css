@@ -101,3 +101,29 @@ canvas {
     text-align: right;
     color: #333;
 }
+/* Styles for the Toolbar */
+.toolbar {
+    position: fixed; /* Fixed position to stay on screen */
+    bottom: 10px; /* Position from bottom */
+    left: 50%; /* Centered horizontally */
+    transform: translateX(-50%); /* Center adjustment */
+    display: flex; /* Use flexbox for layout */
+    gap: 10px; /* Space between buttons */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    padding: 10px; /* Padding around the buttons */
+    border-radius: 5px; /* Rounded corners */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+.toolbar button {
+    padding: 10px 15px; /* Padding for buttons */
+    background-color: #fff; /* White background for buttons */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.toolbar button:hover {
+    background-color: #ddd; /* Change color on hover */
+}
