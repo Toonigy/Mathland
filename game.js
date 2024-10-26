@@ -12,7 +12,7 @@ const avatarData = JSON.parse(localStorage.getItem("avatar")) || {
 };
 
 // Music state variable
-let isMusicPlaying = true;
+let isMusicPlaying = false;
 
 // Draw the Avatar on Canvas
 function drawAvatar() {
@@ -51,7 +51,6 @@ function drawAvatar() {
 function initGame() {
     drawAvatar();
     initUI(); // Initialize the UI
-    playBGM(); // Play background music
 
     // Add event listener for the toggle music button
     toggleMusicBtn.addEventListener("click", toggleMusic);
@@ -71,9 +70,7 @@ function toggleMusic() {
         bgm.pause();
         toggleMusicBtn.innerText = "Play Music";
     } else {
-        bgm.play().catch(error => {
-            console.error("Error playing BGM:", error);
-        });
+        playBGM(); // Call playBGM here to play the music
         toggleMusicBtn.innerText = "Mute Music";
     }
     isMusicPlaying = !isMusicPlaying; // Toggle the state
