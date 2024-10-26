@@ -1,6 +1,7 @@
 // Select UI Elements
 const gameCanvas = document.getElementById("gameCanvas");
 const gameCtx = gameCanvas.getContext("2d");
+const bgm = document.getElementById("bgm"); // Select the audio element
 
 // Avatar Data
 const avatarData = JSON.parse(localStorage.getItem("avatar")) || {
@@ -46,6 +47,15 @@ function drawAvatar() {
 function initGame() {
     drawAvatar();
     initUI(); // Initialize the UI
+    playBGM(); // Play background music
+}
+
+// Play Background Music
+function playBGM() {
+    bgm.volume = 0.5; // Set the volume (0 to 1)
+    bgm.play().catch(error => {
+        console.error("Error playing BGM:", error);
+    });
 }
 
 // Start the game when the page loads
