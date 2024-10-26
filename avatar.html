@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Avatar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="avatar-container">
+        <h1>Create Your Avatar</h1>
+        
+        <!-- Avatar Options -->
+        <label for="color">Choose Color:</label>
+        <input type="color" id="color" value="#ffcc00">
+
+        <label for="size">Size (20-100):</label>
+        <input type="range" id="size" min="20" max="100" value="50">
+
+        <label for="expression">Expression:</label>
+        <select id="expression">
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="angry">Angry</option>
+        </select>
+
+        <button onclick="saveAvatar()">Save and Start Game</button>
+
+        <!-- Canvas to Display Avatar -->
+        <canvas id="avatarCanvas" width="200" height="200"></canvas>
+    </div>
+    
+    <script src="avatar.js"></script>
+</body>
+                                     </html>
