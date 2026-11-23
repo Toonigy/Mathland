@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathLand MMORPG — Realm of Numbers Homepage</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cinzel for Fantasy Headers & Inter for UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 55%, #020617 100%);
+      min-height: 100vh;
+    }
+    .font-fantasy {
+      font-family: 'Cinzel', serif;
+    }
+    @keyframes floatGlyph {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.14; }
+      50% { transform: translateY(-16px) rotate(5deg); opacity: 0.28; }
+    }
+    .floating-glyph {
+      animation: floatGlyph 7s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="text-slate-100 relative overflow-x-hidden">
+
+  <!-- Ambient Floating Math Symbols -->
+  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <span class="floating-glyph absolute top-12 left-8 text-6xl font-fantasy text-indigo-400">∑</span>
+    <span class="floating-glyph absolute top-32 right-12 text-7xl font-fantasy text-emerald-400" style="animation-delay: 1.4s;">π</span>
+    <span class="floating-glyph absolute bottom-24 left-1/4 text-6xl font-fantasy text-amber-400" style="animation-delay: 2.6s;">√x</span>
+    <span class="floating-glyph absolute bottom-16 right-1/5 text-7xl font-fantasy text-purple-400" style="animation-delay: 3.8s;">∞</span>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="relative z-10 border-b border-indigo-500/25 bg-slate-950/75 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <a href="/home.html" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-2xl shadow-lg shadow-indigo-950/60 border border-white/15">
+          🧮
+        </div>
+        <div>
+          <span class="font-fantasy text-xl sm:text-2xl font-black tracking-wider text-white block leading-none">MATHLAND</span>
+          <span class="text-[11px] uppercase tracking-widest text-indigo-300 font-semibold">Realm of Numbers</span>
+        </div>
+      </a>
+
+      <nav class="flex items-center gap-2 sm:gap-4 text-sm font-semibold">
+        <a href="#realms" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">Realms</a>
+        <a href="#mechanics" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">Field Guide</a>
+        <a href="#teachers" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">For Teachers</a>
+        <a href="#parents" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">For Parents</a>
+        <a href="/index.html"
+          class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-2">
+          <span>Enter Portal</span>
+          <span>⚔️</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-16">
+
+    <!-- Hero Banner -->
+    <section class="bg-slate-900/85 backdrop-blur-xl border border-indigo-500/30 rounded-3xl p-7 sm:p-12 shadow-2xl shadow-indigo-950/60 text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-200 text-xs font-bold uppercase tracking-wider">
+        <span>✨</span>
+        <span>Multiplayer Math Adventure • Live Realms</span>
+      </div>
+
+      <h1 class="font-fantasy text-3xl sm:text-5xl md:text-6xl font-black tracking-wide text-white leading-tight">
+        Master Numbers.<br />
+        <span class="bg-gradient-to-r from-amber-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+          Conquer the Realm.
+        </span>
+      </h1>
+
+      <p class="max-w-2xl mx-auto text-slate-300 text-sm sm:text-base leading-relaxed">
+        Explore three distinct mathematical biomes alongside fellow scholars, solve arcane runes for XP and coins,
+        buy nets from Tinker Pip, shake trees for treasures (and watch out for bee swarms!), and always remember to save before leaving—or face Mr. Reseth.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+        <a href="/index.html"
+          class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-emerald-950/60 border border-emerald-400/30 active:scale-[0.99] transition flex items-center gap-2">
+          <span>Forge Scholar & Play</span>
+          <span>🚀</span>
+        </a>
+        <a href="/index.html"
+          class="px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-bold text-sm sm:text-base border border-slate-700 active:scale-[0.99] transition">
+          Sign In / Google Login
+        </a>
+      </div>
+    </section>
+
+    <!-- World Realms / Zones Grid -->
+    <section id="realms" class="space-y-6">
+      <div class="text-center space-y-2">
+        <h2 class="font-fantasy text-2xl sm:text-3xl font-black text-white">Three Biomes of MathLand</h2>
+        <p class="text-slate-400 text-sm">Venture outward from the central spawn plaza as your skills grow.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Arithmetic Meadows -->
+        <article class="bg-slate-900/85 border border-emerald-500/30 rounded-3xl p-6 space-y-3 shadow-xl">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-2xl">
+            🌿
+          </div>
+          <h3 class="font-fantasy text-xl font-bold text-emerald-300">Arithmetic Meadows</h3>
+          <p class="text-xs uppercase tracking-wider font-bold text-emerald-400/80">Levels 1–5 • Addition & Subtraction</p>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Lush oak groves around the spawn plaza where scholars gather starter coins, visit Tinker Pip's Tool Stall, and warm up on core arithmetic runes.
+          </p>
+        </article>
+
+        <!-- Multiplication Woods -->
+        <article class="bg-slate-900/85 border border-teal-500/30 rounded-3xl p-6 space-y-3 shadow-xl">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center text-2xl">
+            🌲
+          </div>
+          <h3 class="font-fantasy text-xl font-bold text-teal-300">Multiplication Woods</h3>
+          <p class="text-xs uppercase tracking-wider font-bold text-teal-400/80">Levels 6–12 • Multiplication & Division</p>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Towering pine forests with richer XP challenges and sharper number sprites waiting for well-equipped explorers.
+          </p>
+        </article>
+
+        <!-- Algebra Peaks -->
+        <article class="bg-slate-900/85 border border-purple-500/30 rounded-3xl p-6 space-y-3 shadow-xl">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-2xl">
+            🔮
+          </div>
+          <h3 class="font-fantasy text-xl font-bold text-purple-300">Algebra Peaks</h3>
+          <p class="text-xs uppercase tracking-wider font-bold text-purple-400/80">Level 13+ • Linear Equations</p>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Mystical indigo crystal peaks where high-level scholars solve for <span class="font-mono text-amber-300">x</span> for massive XP and coin payouts.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Field Mechanics & Tips -->
+    <section id="mechanics" class="bg-slate-900/85 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="font-fantasy text-2xl font-bold text-white">Scholar Field Guide</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Quick survival tips before stepping onto the canvas.</p>
+        </div>
+        <a href="/index.html" class="text-xs font-bold text-indigo-300 hover:text-indigo-200 underline underline-offset-4">
+          Launch Game Now →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+          <div class="font-bold text-amber-300">🌳 Shake Trees ([E] / [Space])</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Shake nearby trees for surprise coins—or risk dropping an angry bee swarm that chases you!
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+          <div class="font-bold text-cyan-300">🕸️ Catch Swarms ([F])</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Buy a Catching Net or Arcane Rune Net from Tinker Pip and press <span class="font-mono">F</span> near bees to snare them for bonus XP & coins.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+          <div class="font-bold text-emerald-300">💾 Always Save Progress</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Click <span class="font-bold text-white">Save Progress</span> before exiting so your Level, XP, coins, and tools are stored safely.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+          <div class="font-bold text-rose-300">🐹 Beware Mr. Reseth</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Leaving without saving counts as a reset—and Mr. Reseth keeps strict track of repeat offenders!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- For Teachers & For Parents Sections -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- For Teachers -->
+      <article id="teachers" class="bg-slate-900/85 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-2xl">
+              🍎
+            </div>
+            <div>
+              <span class="text-[11px] uppercase tracking-widest font-bold text-cyan-400">Classroom & Lab Ready</span>
+              <h2 class="font-fantasy text-2xl font-bold text-white">For Teachers</h2>
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Turn everyday math practice into a shared live world where students build speed, accuracy, and confidence across progressive difficulty tiers.
+          </p>
+
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-200">
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-cyan-400 font-bold">▸</span>
+              <span><strong class="text-white">Scaffolded Skill Tiers:</strong> Students progress naturally from addition & subtraction (Lv. 1–5) to multiplication & division (Lv. 6–12) and linear equations (Lv. 13+).</span>
+            </li>
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-cyan-400 font-bold">▸</span>
+              <span><strong class="text-white">Timed Mental Math & Resource Choice:</strong> Rune challenges reward quick thinking while encouraging smart XP/coin budgeting at Tinker Pip's stall.</span>
+            </li>
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-cyan-400 font-bold">▸</span>
+              <span><strong class="text-white">Browser-Based Setup:</strong> Runs directly in modern classroom browsers with individual scholar accounts and cloud save persistence.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="pt-2">
+          <a href="/index.html"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-200 border border-cyan-400/40 text-xs sm:text-sm font-bold transition">
+            <span>Open Classroom Portal</span>
+            <span>→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- For Parents -->
+      <article id="parents" class="bg-slate-900/85 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-2xl">
+              🏡
+            </div>
+            <div>
+              <span class="text-[11px] uppercase tracking-widest font-bold text-amber-400">Safe & Habit-Building</span>
+              <h2 class="font-fantasy text-2xl font-bold text-white">For Parents</h2>
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Give your child an engaging, low-pressure way to practice math at home while building helpful habits around saving progress and taking responsibility.
+          </p>
+
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-200">
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-amber-400 font-bold">▸</span>
+              <span><strong class="text-white">Positive Math Reinforcement:</strong> Solving runes earns XP, levels, and coins—turning extra practice into exciting milestones.</span>
+            </li>
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-amber-400 font-bold">▸</span>
+              <span><strong class="text-white">Teaches Saving & Accountability:</strong> Forgetting to save before exiting triggers humorous visits from Mr. Reseth, helping kids remember to save their work.</span>
+            </li>
+            <li class="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-950/75 border border-slate-800/90">
+              <span class="text-amber-400 font-bold">▸</span>
+              <span><strong class="text-white">Easy Sign-In Options:</strong> Scholars can sign in with email or Google so their saved level, XP, coins, and tools stay ready for the next session.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="pt-2">
+          <a href="/index.html"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs sm:text-sm font-bold transition">
+            <span>Start At-Home Session</span>
+            <span>→</span>
+          </a>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-slate-800/80 bg-slate-950/80 py-6 text-center text-xs text-slate-400">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>MathLand MMORPG • Realm of Numbers</span>
+      <div class="flex items-center gap-4">
+        <a href="/home.html" class="hover:text-white transition">Home</a>
+        <a href="/index.html" class="hover:text-white transition">Play Game</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

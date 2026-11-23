@@ -1,0 +1,2679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathLand MMORPG — Scholar Portal</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Google Fonts: Cinzel for Fantasy Headers & Inter for clean UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 55%, #020617 100%);
+      min-height: 100vh;
+    }
+    .font-fantasy {
+      font-family: 'Cinzel', serif;
+    }
+    @keyframes floatRune {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.14; }
+      50% { transform: translateY(-18px) rotate(6deg); opacity: 0.28; }
+    }
+    .rune-bg {
+      animation: floatRune 7s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+    canvas {
+      display: block;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="text-slate-100 flex items-center justify-center p-4 relative overflow-x-hidden">
+
+  <!-- Decorative Floating Math Runes in Background (Auth Screen) -->
+  <div id="authBackground" class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <span class="rune-bg absolute top-10 left-10 text-6xl font-fantasy text-indigo-400">∑</span>
+    <span class="rune-bg absolute top-1/4 right-14 text-7xl font-fantasy text-emerald-400" style="animation-delay: 1.5s;">π</span>
+    <span class="rune-bg absolute bottom-16 left-1/4 text-6xl font-fantasy text-amber-400" style="animation-delay: 3s;">√x</span>
+    <span class="rune-bg absolute bottom-20 right-1/4 text-7xl font-fantasy text-purple-400" style="animation-delay: 2s;">∞</span>
+    <span class="rune-bg absolute top-1/2 left-12 text-5xl font-fantasy text-cyan-400" style="animation-delay: 4s;">Δy/Δx</span>
+  </div>
+
+  <!-- Main Auth Card Container -->
+  <main id="authCard" class="relative z-10 w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-indigo-500/30 rounded-3xl shadow-2xl shadow-indigo-950/60 overflow-hidden">
+    
+    <!-- Top Header Banner -->
+    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-6 text-center border-b border-indigo-400/20">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-950/40 border border-white/20 mb-3 shadow-inner">
+        <span class="text-3xl">🧮</span>
+      </div>
+      <h1 class="font-fantasy text-3xl font-black tracking-wider text-white drop-shadow">MATHLAND</h1>
+      <p class="text-indigo-100 text-xs uppercase tracking-widest mt-1 font-semibold">Realm of Numbers • MMORPG</p>
+    </div>
+
+    <!-- Role Selector Menu (Student / Teacher / Parent) -->
+    <div id="roleMenuBar" class="px-6 pt-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">Who is visiting today?</span>
+        <a href="/home.html" class="text-[11px] font-semibold text-slate-400 hover:text-indigo-300 transition">Homepage →</a>
+      </div>
+      <div class="grid grid-cols-3 gap-2 bg-slate-950/90 p-1.5 rounded-2xl border border-slate-800">
+        <button id="roleStudentBtn" type="button" data-role="student"
+          class="role-tab-btn py-2 px-2 rounded-xl text-xs font-extrabold bg-indigo-600 text-white shadow transition flex flex-col sm:flex-row items-center justify-center gap-1">
+          <span>🎒</span>
+          <span>Student</span>
+        </button>
+        <button id="roleTeacherBtn" type="button" data-role="teacher"
+          class="role-tab-btn py-2 px-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex flex-col sm:flex-row items-center justify-center gap-1">
+          <span>🍎</span>
+          <span>Teacher</span>
+        </button>
+        <button id="roleParentBtn" type="button" data-role="parent"
+          class="role-tab-btn py-2 px-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex flex-col sm:flex-row items-center justify-center gap-1">
+          <span>🏡</span>
+          <span>Parent</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Custom Alert / Status Message Box (No alert() used) -->
+    <div id="statusBanner" class="hidden mx-6 mt-4 p-3.5 rounded-xl text-sm font-medium border transition-all"></div>
+
+    <!-- TEACHER ROLE PANEL -->
+    <div id="teacherRolePanel" class="hidden p-6 sm:p-8 space-y-4">
+      <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <h2 class="font-fantasy text-lg font-bold text-cyan-300">🍎 Teacher Portal Menu</h2>
+          <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-200 text-[10px] font-bold uppercase">Educator</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Guide students through progressive math biomes—from Addition &amp; Subtraction (Lv. 1–5) to Multiplication &amp; Division (Lv. 6–12) and Linear Equations (Lv. 13+).
+        </p>
+      </div>
+
+      <div class="space-y-2 text-xs text-slate-200">
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <strong class="text-cyan-300">Classroom Tip:</strong> Have students click <em>Save Progress</em> before closing tabs so their Level, XP, coins, and tools are saved.
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <strong class="text-amber-300">Curriculum Overview:</strong> Read full classroom notes on the <a href="/home.html#teachers" class="underline text-cyan-300 hover:text-cyan-200">For Teachers</a> section of the homepage.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        <button id="teacherEnterStudentLoginBtn" type="button"
+          class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg transition">
+          Open Scholar Sign-In →
+        </button>
+        <a href="/home.html#teachers"
+          class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-bold border border-slate-700 text-center transition">
+          Teacher Guide
+        </a>
+      </div>
+    </div>
+
+    <!-- PARENT ROLE PANEL -->
+    <div id="parentRolePanel" class="hidden p-6 sm:p-8 space-y-4">
+      <div class="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <h2 class="font-fantasy text-lg font-bold text-amber-300">🏡 Parent Portal Menu</h2>
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 text-[10px] font-bold uppercase">Family</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Support your child's math practice at home while encouraging positive habits around saving progress and learning from Mr. Reseth when exiting unsaved.
+        </p>
+      </div>
+
+      <div class="space-y-2 text-xs text-slate-200">
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <strong class="text-amber-300">Account &amp; Progress:</strong> Scholars can sign in with email or Google so their Level, XP, coins, and purchased tools carry over.
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <strong class="text-emerald-300">At-Home Guide:</strong> Explore family tips in the <a href="/home.html#parents" class="underline text-amber-300 hover:text-amber-200">For Parents</a> section of the homepage.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        <button id="parentEnterStudentLoginBtn" type="button"
+          class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs sm:text-sm font-extrabold shadow-lg transition">
+          Sign In Child's Account →
+        </button>
+        <a href="/home.html#parents"
+          class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-bold border border-slate-700 text-center transition">
+          Parent Guide
+        </a>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- AUTHENTICATION VIEW (LOGIN / SIGNUP TABS)                           -->
+    <!-- =================================================================== -->
+    <div id="authContainer" class="p-6 sm:p-8">
+      <!-- Mode Switcher Tabs -->
+      <div class="grid grid-cols-2 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800 mb-6">
+        <button id="tabLogin" type="button" class="py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 text-white shadow transition-all">
+          Scholar Login
+        </button>
+        <button id="tabSignup" type="button" class="py-2.5 text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          Create Character
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="loginEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+          <input id="loginEmail" type="email" required placeholder="scholar@mathland.gg"
+            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition" />
+        </div>
+
+        <div>
+          <label for="loginPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+          <input id="loginPassword" type="password" required placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition" />
+        </div>
+
+        <button type="submit" id="loginSubmitBtn"
+          class="w-full py-3.5 px-4 mt-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold shadow-lg shadow-indigo-600/30 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+          <span>Enter Realm</span>
+          <span>⚔️</span>
+        </button>
+
+        <div class="relative flex items-center py-1">
+          <div class="flex-grow border-t border-slate-800"></div>
+          <span class="px-3 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">or</span>
+          <div class="flex-grow border-t border-slate-800"></div>
+        </div>
+
+        <button type="button" id="googleSignInBtn"
+          class="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold shadow active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 border border-slate-200">
+          <span>🌐</span>
+          <span>Sign in with Google</span>
+        </button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" class="space-y-4 hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="firstName" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">First Name</label>
+            <input id="firstName" type="text" required maxlength="14" placeholder="Alex"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+          </div>
+          <div>
+            <label for="lastName" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Last Name</label>
+            <input id="lastName" type="text" required maxlength="16" placeholder="Rivera"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+          </div>
+        </div>
+
+        <!-- Live Generated Username Preview Box -->
+        <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-emerald-500/30 flex items-center justify-between gap-2">
+          <div>
+            <span class="block text-[11px] uppercase tracking-wider text-emerald-400 font-semibold">Generated Hero Username</span>
+            <span id="generatedUsernameDisplay" class="text-base font-bold text-white tracking-wide">ScholarA1234</span>
+          </div>
+          <button type="button" id="rerollUsernameBtn" title="Generate new random numbers"
+            class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-300 border border-slate-700 active:scale-95 transition">
+            🎲 Reroll
+          </button>
+        </div>
+
+        <div>
+          <label for="signupEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+          <input id="signupEmail" type="email" required placeholder="alex@mathland.gg"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+        </div>
+
+        <div>
+          <label for="signupPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password (min 6 chars)</label>
+          <input id="signupPassword" type="password" required minlength="6" placeholder="••••••••"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+        </div>
+
+        <button type="submit" id="signupSubmitBtn"
+          class="w-full py-3.5 px-4 mt-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-600/30 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+          <span>Forge Scholar & Play</span>
+          <span>✨</span>
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- FULLSCREEN MULTIPLAYER GAME ENVIRONMENT (SHOWN AFTER LOGIN)           -->
+  <!-- ===================================================================== -->
+  <div id="gameScreen" class="hidden fixed inset-0 z-20 bg-slate-950 flex flex-col select-none">
+    
+    <!-- Top HUD Bar -->
+    <header class="bg-slate-900/95 backdrop-blur-md border-b border-indigo-500/30 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 z-30 shadow-lg">
+      <!-- Player Identity & Stats -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-fantasy font-black text-lg shadow">
+          🧙‍♂️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="hudUsername" class="font-bold text-white text-sm sm:text-base">Scholar</span>
+            <span id="hudLevelBadge" class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+              Lvl 1
+            </span>
+            <span id="hudCoinsBadge" class="px-2 py-0.5 rounded-md bg-yellow-500/20 text-yellow-300 border border-yellow-400/40 text-xs font-bold">
+              🪙 0
+            </span>
+          </div>
+          <!-- HP & XP Bars -->
+          <div class="flex items-center gap-3 mt-1 text-[11px] font-semibold">
+            <div class="flex items-center gap-1.5">
+              <span class="text-rose-400">HP</span>
+              <div class="w-20 sm:w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div id="hudHpBar" class="h-full bg-rose-500 transition-all duration-200" style="width: 100%"></div>
+              </div>
+              <span id="hudHpText" class="text-slate-300">100/100</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-cyan-400">XP</span>
+              <div class="w-20 sm:w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div id="hudXpBar" class="h-full bg-cyan-400 transition-all duration-200" style="width: 0%"></div>
+              </div>
+              <span id="hudXpText" class="text-slate-300">0/100</span>
+            </div>
+          </div>
+          <div id="hudToolsBag" class="mt-1 text-[11px] text-amber-300/90 font-medium truncate max-w-[260px] sm:max-w-md">
+            🎒 Tools: None yet
+          </div>
+        </div>
+      </div>
+
+      <!-- Zone & Coordinates Indicator -->
+      <div class="hidden md:flex flex-col items-center">
+        <span id="hudZone" class="font-fantasy text-xs font-bold tracking-widest text-emerald-400 uppercase">ARITHMETIC MEADOWS</span>
+        <span id="hudCoords" class="text-[11px] text-slate-400 font-mono">X: 1000, Y: 1000</span>
+      </div>
+
+      <!-- Action Buttons: Save Progress & Sign Out -->
+      <div class="flex items-center gap-2">
+        <button id="openShopBtn" type="button" title="Open Tinker Pip's Tool Shop"
+          class="px-2.5 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-500 text-slate-950 text-xs font-extrabold shadow border border-amber-300/40 active:scale-95 transition flex items-center gap-1">
+          <span>🕸️</span>
+          <span class="hidden sm:inline">Tool Shop</span>
+        </button>
+
+        <button id="devResetResethBtn" type="button" title="Dev Debug: Reset Reseth counter to 0"
+          class="px-2.5 py-2 rounded-xl bg-amber-950/80 hover:bg-amber-900 text-amber-300 text-xs font-bold border border-amber-500/40 active:scale-95 transition flex items-center gap-1">
+          <span>🛠️</span>
+          <span class="hidden lg:inline">Reset Reseth</span>
+        </button>
+
+        <button id="encounterBtn" type="button"
+          class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow border border-indigo-400/30 active:scale-95 transition flex items-center gap-1.5">
+          <span>⚔️</span>
+          <span class="hidden sm:inline">Solve Rune</span>
+        </button>
+
+        <button id="saveProgressBtn" type="button"
+          class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-900/40 border border-emerald-400/30 active:scale-95 transition flex items-center gap-1.5">
+          <span>💾</span>
+          <span id="saveBtnText">Save Progress</span>
+        </button>
+
+        <button id="gameLogoutBtn" type="button"
+          class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 active:scale-95 transition">
+          Exit
+        </button>
+      </div>
+    </header>
+
+    <!-- In-Game Toast Notification -->
+    <div id="gameToast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2.5 rounded-xl bg-slate-900/95 border border-emerald-500/50 text-emerald-200 text-xs sm:text-sm font-semibold shadow-2xl backdrop-blur-md transition-all">
+    </div>
+
+    <!-- Interactive World Canvas -->
+    <div id="canvasWrapper" class="relative flex-1 w-full h-full overflow-hidden">
+      <canvas id="worldCanvas" class="w-full h-full"></canvas>
+
+      <!-- Controls Hint Overlay -->
+      <div class="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur-md border border-slate-700/70 px-3.5 py-2 rounded-xl text-[11px] text-slate-300 pointer-events-none">
+        <span class="font-bold text-indigo-300">Move:</span> WASD / Arrow Keys or Tap & Hold • <span class="font-bold text-emerald-300">Shake Tree:</span> E or Space • <span class="font-bold text-cyan-300">Catch Bees:</span> F (with Net) • <span class="font-bold text-amber-300">Shop:</span> Walk to Tinker Pip or click Tool Shop
+      </div>
+
+      <!-- Online Scholars Counter -->
+      <div class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md border border-slate-700/70 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 flex items-center gap-2 pointer-events-none">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="onlineCountText">1 Scholar Online</span>
+      </div>
+    </div>
+
+    <!-- Tool Merchant Shop Modal (Tinker Pip) -->
+    <div id="toolShopModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="w-full max-w-lg bg-slate-900 border-2 border-amber-500/60 rounded-3xl p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4">
+        <div class="flex items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-2xl">
+              🧰
+            </div>
+            <div>
+              <h3 class="font-fantasy text-lg sm:text-xl font-bold text-amber-300">Tinker Pip's Tool Stall</h3>
+              <p class="text-xs text-slate-400">"Fresh nets & field gear—spend your hard-earned XP!"</p>
+            </div>
+          </div>
+          <button id="closeShopBtn" type="button"
+            class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition">
+            ✕ Close
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between bg-slate-950/90 border border-cyan-500/30 rounded-2xl px-4 py-2.5 text-xs font-bold">
+          <span class="text-slate-300">Your Available XP:</span>
+          <span id="shopXpBalance" class="text-cyan-400 text-sm">0 XP</span>
+        </div>
+
+        <div id="toolShopList" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1"></div>
+      </div>
+    </div>
+
+    <!-- Mr. Reseth Lecture & Typing Challenge Modal -->
+    <div id="resethModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="w-full max-w-lg bg-amber-950/95 border-2 border-amber-400/70 rounded-3xl p-5 sm:p-6 shadow-2xl text-amber-50 space-y-4">
+        <div class="flex items-center justify-between gap-2 border-b border-amber-500/30 pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🐹</span>
+            <div>
+              <h3 class="font-fantasy text-lg font-black text-amber-300 tracking-wide">MR. RESETH</h3>
+              <span id="resethCountBadge" class="inline-block px-2 py-0.5 rounded bg-amber-900/90 border border-amber-500/40 text-[11px] font-bold text-amber-200">
+                Reset #1
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="resethAudioBtn" type="button"
+              class="px-2.5 py-1.5 rounded-xl bg-amber-900/90 hover:bg-amber-800 text-amber-200 text-xs font-bold border border-amber-500/40 transition">
+              🔊 Theme Playing
+            </button>
+            <span id="resethPageIndicator" class="text-xs font-mono font-bold text-amber-300/90">1 / 1</span>
+          </div>
+        </div>
+
+        <p id="resethDialogueText" class="text-sm sm:text-base leading-relaxed whitespace-pre-line font-medium text-amber-50 bg-slate-950/55 border border-amber-500/25 rounded-2xl p-4 min-h-[120px]"></p>
+
+        <!-- 5th / 6th+ Reset Exact Phrase Challenge Form -->
+        <form id="resethPhraseForm" class="hidden space-y-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-amber-300">Quick Symbols:</span>
+            <button type="button" data-insert-symbol="❤️" class="reseth-symbol-btn px-2.5 py-1 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-xs font-bold">
+              Insert ❤️
+            </button>
+            <button type="button" data-insert-symbol="💀" class="reseth-symbol-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
+              Insert 💀
+            </button>
+          </div>
+          <input id="resethPhraseInput" type="text" autocomplete="off" placeholder="Type the exact phrase here..."
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-amber-500/50 text-white placeholder-slate-500 text-sm font-semibold focus:outline-none focus:border-amber-300" />
+          <button type="submit"
+            class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-sm shadow transition">
+            Speak to Mr. Reseth 🗣️
+          </button>
+        </form>
+
+        <div class="flex items-center justify-end gap-2.5 pt-1">
+          <button id="resethNoWayBtn" type="button"
+            class="hidden px-4 py-2.5 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs sm:text-sm font-extrabold shadow border border-rose-400/40 active:scale-95 transition">
+            No way!
+          </button>
+          <button id="resethNextBtn" type="button"
+            class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 text-xs sm:text-sm font-extrabold shadow active:scale-95 transition">
+            Next ▶
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Math Combat Modal (Triggered when solving a Rune) -->
+    <div id="combatModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-6 shadow-2xl text-center space-y-4">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/20 text-2xl border border-indigo-400/30">
+          🔮
+        </div>
+        <h3 class="font-fantasy text-xl font-bold text-white">Arcane Math Challenge</h3>
+        <p id="challengeQuestion" class="text-2xl font-extrabold text-amber-300 py-3 px-4 rounded-2xl bg-slate-950 border border-slate-800">
+          12 + 8
+        </p>
+        <form id="combatAnswerForm" class="space-y-3">
+          <input id="challengeAnswerInput" type="number" step="any" required placeholder="Enter your answer..."
+            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-center text-lg font-bold text-white focus:outline-none focus:border-indigo-500" />
+          <button type="submit"
+            class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold shadow-lg transition">
+            Cast Answer ⚡
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Socket.io Client Library (Served automatically by server.js) -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Firebase Modular SDK + Game Client Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      updateProfile,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Your provided Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwTZJ0pBqvNc4Y1uGkD0O0TB9q2l8niCU",
+      authDomain: "mathland-852a2.firebaseapp.com",
+      projectId: "mathland-852a2",
+      storageBucket: "mathland-852a2.firebasestorage.app",
+      messagingSenderId: "196050112063",
+      appId: "1:196050112063:web:ca71d1099b45f4d3bfb28a",
+      measurementId: "G-DTHZ7RBQXE"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mathland-852a2';
+
+    // DOM Elements
+    const authCard = document.getElementById('authCard');
+    const authBackground = document.getElementById('authBackground');
+    const gameScreen = document.getElementById('gameScreen');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const statusBanner = document.getElementById('statusBanner');
+
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const generatedUsernameDisplay = document.getElementById('generatedUsernameDisplay');
+    const rerollUsernameBtn = document.getElementById('rerollUsernameBtn');
+
+    // Role Selection Menu Logic (Student / Teacher / Parent)
+    const authContainer = document.getElementById('authContainer');
+    const teacherRolePanel = document.getElementById('teacherRolePanel');
+    const parentRolePanel = document.getElementById('parentRolePanel');
+    const roleButtons = document.querySelectorAll('.role-tab-btn');
+    let selectedRole = 'student';
+
+    function setActiveRole(role) {
+      selectedRole = role;
+      clearStatus();
+
+      roleButtons.forEach((btn) => {
+        const isSelected = btn.getAttribute('data-role') === role;
+        btn.classList.remove('bg-indigo-600', 'bg-cyan-600', 'bg-amber-500', 'text-white', 'text-slate-950', 'text-slate-400', 'font-extrabold', 'font-bold', 'shadow');
+        if (isSelected) {
+          btn.classList.add('font-extrabold', 'shadow');
+          if (role === 'student') btn.classList.add('bg-indigo-600', 'text-white');
+          if (role === 'teacher') btn.classList.add('bg-cyan-600', 'text-white');
+          if (role === 'parent') btn.classList.add('bg-amber-500', 'text-slate-950');
+        } else {
+          btn.classList.add('text-slate-400', 'font-bold');
+        }
+      });
+
+      authContainer.classList.toggle('hidden', role !== 'student');
+      teacherRolePanel.classList.toggle('hidden', role !== 'teacher');
+      parentRolePanel.classList.toggle('hidden', role !== 'parent');
+    }
+
+    roleButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const role = btn.getAttribute('data-role') || 'student';
+        setActiveRole(role);
+      });
+    });
+
+    const teacherEnterStudentLoginBtn = document.getElementById('teacherEnterStudentLoginBtn');
+    if (teacherEnterStudentLoginBtn) {
+      teacherEnterStudentLoginBtn.addEventListener('click', () => setActiveRole('student'));
+    }
+
+    const parentEnterStudentLoginBtn = document.getElementById('parentEnterStudentLoginBtn');
+    if (parentEnterStudentLoginBtn) {
+      parentEnterStudentLoginBtn.addEventListener('click', () => setActiveRole('student'));
+    }
+
+    // Username Generation State
+    let randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    let currentGeneratedUsername = '';
+    let activeProfile = null;
+
+    // Tool Merchant NPC & Inventory Catalog
+    const TOOL_CATALOG = [
+      {
+        id: 'bug_net',
+        name: 'Catching Net',
+        icon: '🕸️',
+        costXp: 25,
+        desc: 'Fine-mesh net for catching wandering number sprites & meadow critters.'
+      },
+      {
+        id: 'rune_net',
+        name: 'Arcane Rune Net',
+        icon: '✨',
+        costXp: 75,
+        desc: 'Woven with silver thread to snare high-energy math wisps.'
+      },
+      {
+        id: 'woods_axe',
+        name: 'Timber Hatchet',
+        icon: '🪓',
+        costXp: 50,
+        desc: 'Balanced blade built for clearing branches in Multiplication Woods.'
+      },
+      {
+        id: 'crystal_pick',
+        name: 'Algebra Pickaxe',
+        icon: '⛏️',
+        costXp: 120,
+        desc: 'Reinforced mining pick for harvesting crystal nodes in Algebra Peaks.'
+      }
+    ];
+
+    const toolMerchantNpc = {
+      name: 'Tinker Pip',
+      x: 1110,
+      y: 965
+    };
+
+    const toolShopModal = document.getElementById('toolShopModal');
+    const toolShopList = document.getElementById('toolShopList');
+    const shopXpBalance = document.getElementById('shopXpBalance');
+    const openShopBtn = document.getElementById('openShopBtn');
+    const closeShopBtn = document.getElementById('closeShopBtn');
+    let lastMerchantPromptAt = 0;
+
+    function getOwnedTools() {
+      return Array.isArray(localAvatar.tools) ? localAvatar.tools : [];
+    }
+
+    function openToolShop() {
+      renderToolShop();
+      toolShopModal.classList.remove('hidden');
+    }
+
+    function closeToolShop() {
+      toolShopModal.classList.add('hidden');
+    }
+
+    function renderToolShop() {
+      const currentXp = Number(localAvatar.xp) || 0;
+      const owned = getOwnedTools();
+      shopXpBalance.textContent = `${currentXp} XP`;
+      toolShopList.innerHTML = '';
+
+      TOOL_CATALOG.forEach((item) => {
+        const count = owned.filter((id) => id === item.id).length;
+        const canAfford = currentXp >= item.costXp;
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800';
+        row.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-xl shrink-0">
+              ${item.icon}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">${item.name}</span>
+                ${count > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">Owned x${count}</span>` : ''}
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5">${item.desc}</p>
+            </div>
+          </div>
+          <button type="button" data-buy-tool="${item.id}" ${canAfford ? '' : 'disabled'}
+            class="px-3.5 py-2 rounded-xl text-xs font-extrabold shrink-0 transition ${
+              canAfford
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow active:scale-95'
+                : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+            }">
+            ${item.costXp} XP
+          </button>
+        `;
+
+        const buyBtn = row.querySelector(`[data-buy-tool="${item.id}"]`);
+        if (buyBtn && canAfford) {
+          buyBtn.addEventListener('click', () => {
+            const latestXp = Number(localAvatar.xp) || 0;
+            if (latestXp < item.costXp) {
+              showGameToast('⚠️ Not enough XP for that tool!', true);
+              return;
+            }
+            localAvatar.xp = latestXp - item.costXp;
+            localAvatar.tools = [...getOwnedTools(), item.id];
+            if (activeProfile) {
+              activeProfile.xp = localAvatar.xp;
+              activeProfile.tools = [...localAvatar.tools];
+            }
+            updateHudUI();
+            renderToolShop();
+            showGameToast(`🧰 Bought ${item.name} for ${item.costXp} XP! Click Save Progress to keep it.`);
+          });
+        }
+
+        toolShopList.appendChild(row);
+      });
+    }
+
+    if (openShopBtn) {
+      openShopBtn.addEventListener('click', openToolShop);
+    }
+    if (closeShopBtn) {
+      closeShopBtn.addEventListener('click', closeToolShop);
+    }
+
+    const resethNpc = {
+      active: false,
+      resetCount: 0,
+      x: 1090,
+      y: 1010,
+      spawnOriginX: 1000,
+      spawnOriginY: 1000,
+      pageIndex: 0,
+      awaitingApproach: false,
+      awaitingLeaveTrigger: false,
+      lastLeashWarningAt: 0,
+      fourthPhase: 'approach',
+      noWayVariant: 0,
+      fifthPhase: 'main',
+      targetPhrase: 'Yes, boss!'
+    };
+
+    const resethThemeAudio = new Audio('/reseth.mp3');
+    resethThemeAudio.loop = true;
+    resethThemeAudio.volume = 0.65;
+
+    const resethAudioBtn = document.getElementById('resethAudioBtn');
+
+    function syncResethAudioButton() {
+      if (!resethAudioBtn) return;
+      if (!resethThemeAudio.paused) {
+        resethAudioBtn.textContent = '🔊 Theme Playing';
+      } else {
+        resethAudioBtn.textContent = '🔇 Unmute Theme';
+      }
+    }
+
+    function playResethTheme() {
+      if (!resethNpc.active) return;
+      resethThemeAudio.play()
+        .then(() => {
+          syncResethAudioButton();
+        })
+        .catch(() => {
+          syncResethAudioButton();
+        });
+    }
+
+    function stopResethTheme() {
+      resethThemeAudio.pause();
+      resethThemeAudio.currentTime = 0;
+      syncResethAudioButton();
+    }
+
+    if (resethAudioBtn) {
+      resethAudioBtn.addEventListener('click', () => {
+        if (resethThemeAudio.paused) {
+          playResethTheme();
+        } else {
+          resethThemeAudio.pause();
+          syncResethAudioButton();
+        }
+      });
+    }
+
+    function unlockResethAudioOnInteraction() {
+      if (resethNpc.active && resethThemeAudio.paused) {
+        playResethTheme();
+      }
+    }
+
+    window.addEventListener('pointerdown', unlockResethAudioOnInteraction, { passive: true });
+    window.addEventListener('keydown', unlockResethAudioOnInteraction, { passive: true });
+
+    resethThemeAudio.addEventListener('error', () => {
+      console.error('Could not load /reseth.mp3! Make sure reseth.mp3 is placed inside your public/ folder.');
+      showGameToast('⚠️ Missing public/reseth.mp3 file!', true);
+    });
+
+    const RESETH_FIRST_DIALOGUE = [
+      "Hello. Um...allow me to introduce myself. The name's Reseth. Mr. Reseth. Have we...met before? by the fountain, perhaps? Yeah, whatever.",
+      "Anyway, let me just say thanks for playing this game, Mathland. Um...on behalf of everyone at ultra studios, I...um...I...\n\nWhat was the next part? Huh? Aw, forget it! That's enough! Let's get down to business, whaddaya say? Because you may not know it, but you and I got issues to discuss.",
+      "First, let me just tell you what it is I'm doin' here. Just so there are no misunderstandings later on.\n\nYou, my friend, reset your game, didn't you? Huh? Maybe on accident, maybe on purpose, but you pressed it.\n\nOr maybe you didn't, huh? Maybe you just went and turned the power off without saving. Sound familiar?",
+      "What? Sorry, what was that? I didn't catch that last bit. Did you just say I'm right? You did what I said you did?\n\nAh-HAH!!!",
+      "All right, you listen and listen good, 'cause I get real angry when I gotta repeat stuff I gotta say.\n\nResetting... It's like...pressing an emergency call button. You press it and I gotta come read you the riot act. See? Also, you gotta SAVE before you close the tab. If you don't save, it's the same as resetting. Well, OK... That last part? I just added that. Why? Because I wanted to.",
+      "Forget about other games for a minute, will ya?\n\nI'm here to suggest that you try and play THIS game, Mathland, without hitting RESET. Got it? I know what you're thinking: \"Whether I hit RESET or not should be up to me. After all, it's MY Computer!\" Well, sorry. Rules are rules, OK? Know what I'm sayin'? Let's not make a big deal out of this. End of discussion.",
+      "This bein' our first meeting, I'm gonna let you off easy. Think of this as a friendly warning from me to you.\n\nOh, one more thing. This is my job. I take it seriously. So next time you see me, it's no more Mr. npc! Oh, yeah, and another thing I guess I gotta say here...",
+      "I really watched my... language...here today. I'm not usually quite so... you know, so polite.\n\nIf I'm bein' truthful here, I gotta tell you... I been told I got what you call an acid tongue. I sorta...scare people.",
+      "Hey, that's...who I am. Nothin' I can do about it. What, I'm supposed to say sorry for bein' me?\n\nLook, it's nothin' personal. I ain't tryin' to be mean or cruel or nothin'. I ain't a monster.",
+      "For those people who get their feelin's bruised easily, I gotta apologize in advance. Just deal with it, OK?\n\nThe deal is, I get paid to be nasty. Crazy world, huh? Ha ha ha ha ha!!!",
+      "Well, I figure it's about time for me to get outta here.\n\nSo, uh... Yeah. Here's hoping I don't have to come see you no more. Now...\n\nSCRAM!"
+    ];
+
+    const RESETH_SECOND_DIALOGUE = [
+      "Oh, here we go. You again, huh? I shoulda known...",
+      "I had a feeling about you. After all, wanting to do what you're told NOT to do is HUMAN nature.",
+      "Listen, you get this whole reset thing started, and you'll NEVER stop. I seen it a million times.",
+      "You think this is a game? Well, OK...it is a game. But games got rules, and rules got consequences.",
+      "Somethin' funny to you? What am I doin' over here, stand-up? You see an APPLAUSE sign up in here?",
+      "Look, don't make me come back here again. I'm serious. It ain't like I enjoy these little field trips.",
+      "Next time you see me, I'm gonna be wearing my angry hat. And lemme tell you, it's one ugly hat.",
+      "Trust me on this one. When I get my motor goin', you'll be here a while. Don't reset again! Now...\n\nSCRAM!"
+    ];
+
+    // Builds Mr. Reseth's 3rd reset dialogue with the player's username injected
+    function buildResethThirdDialogue(playerName) {
+      const safeName = playerName || 'Scholar';
+      return [
+        "YOU!!!",
+        "So where you goin'? Huh? Lemme ask you something. What did you just do? Yeah, I'm talkin to you!",
+        "What do I mean? What do I mean?",
+        "You trying to be funny?",
+        "Resetting! I'm talkin' about you resetting the game!",
+        `Listen to me, ${safeName}. You think you can fool me? You're foolin' yourself. It ain't gonna happen.`,
+        "See, it's like this, all right? Whenever you reset, there's this light in the Reset Center that starts flashin'...",
+        "It's so bright it hurts my brain!",
+        "Now, don't get me wrong. I understand that you PEOPLE make mistakes. It's genetic or somethin'.",
+        "Who knows? Maybe your finger slipped. I don't know and I don't care. What I DO want is for you to do me a favor.",
+        "Yeah, do me a favor and answer this one question. Pray tell, is there a RESET Button in your world?",
+        "There isn't, is there?",
+        "HUH?",
+        "Of course not. That would be stupid.",
+        "Not being able to do things over again? That's...called life, and you best get used to it.",
+        "What? What was that? \"It's just a game\"? \"Don't make such a big deal out of it\"?",
+        "THAT'S what I'm talkin' about!",
+        "Your attitude! It STINKS!",
+        "\"It's just a game. Waaah!\" What is that? I'll tell you what it is. It's pathetic. You oughta be ashamed.",
+        "Huh? What's that? Speak up, you reset-happy cheater! You tellin' me you never said that at all?",
+        "Hmph. All right. Maybe I had some dirt in my ears. Forget about it. Let's move on.",
+        "Lemme just give you some examples of what I'm talkin' about, OK? And make sure you PAY ATTENTION!",
+        "Resetting over and over just to find an item or to erase an unfortunate incident...? Sound familiar?",
+        `${safeName}, this is just the kind of juvenile and disgustin' style of gameplay that we want you to avoid.`,
+        "Where's the satisfaction in cheatin' through life? Take everythin' as it comes. In its own time. Enjoy it all.",
+        "That's noble. That's graceful. And it's a whole lot easier to do in this game than it is in real life, lemme tell you!",
+        "Sigh",
+        "I bet you're askin' yourself, \"How much longer is this guy gonna go on?\" You are, aren't you? Huh?",
+        "Ahhh, whatever. Attention span of a flea, that's what you got. All this jawin' tired me out anyway.",
+        "I'm gonna let you go, for now, anyway.",
+        "BUT you gotta promise me: no more. I'm serious here. Resetting is completely OFF-LIMITS!",
+        "Oh, yeah, and one last thing:",
+        "Take a bath!",
+        "You got it? Now...\n\nSCRAM!"
+      ];
+    }
+
+    // Selects the dialogue script based on how many times the player has reset
+    function getActiveResethDialogue() {
+      const currentName = activeProfile ? activeProfile.username : 'Scholar';
+      if (resethNpc.resetCount >= 3) {
+        return buildResethThirdDialogue(currentName);
+      }
+      if (resethNpc.resetCount === 2) {
+        return RESETH_SECOND_DIALOGUE;
+      }
+      return RESETH_FIRST_DIALOGUE;
+    }
+
+    // Builds the opening lines for Mr. Reseth's 4th reset before he demands the player walk over
+    function buildResethFourthApproachDialogue(playerName) {
+      const safeName = playerName || 'Scholar';
+      return [
+        "Hey, you! Hold up a minute! Who? You! You you YOU!!!",
+        `Don't pretend you don't know who I'm talkin' to, ${safeName}! You ain't foolin' nobody!`,
+        "Get your tail over here!"
+      ];
+    }
+
+    const RESETH_FOURTH_LEASH_LINE = "Hey! HEY!!! Where do you think you're goin', you little twerp? I SAID get over here!";
+
+    function buildResethFourthMainDialogue(playerName) {
+      const safeName = playerName || 'Scholar';
+      return [
+        "You're a real piece of work, you know that? You think I was any other npc or somethin'? When I call you, I expect you to move. And I mean MOVE!",
+        "...Um, what was that? That look you just gave me. What, may I ask, was that?",
+        "Are you testin' me? You don't wanna do that! I'm warnin' you! You'll rue the day you moved here!",
+        "And don't gimme that crybaby what-did-I-do? look either! It ain't gonna fly!!! Not with THIS mole!!!",
+        "RESET RESET RESET! You just had to do it again, didn't you?",
+        "After all the kindness I been showin' you... You go and stab me in the back. What would your mother say? EY!",
+        "You were gonna go and do it again, weren't you? Just now! Your cursor was creepin' over to refresh this tab! STOP! Just give it a rest, will ya? That's not gonna help you outta this jam. I'll just keep comin' back!",
+        "And stop wigglin' around like you gotta go potty! You're drivin' me nuts! Just stand there and listen!",
+        "I'm wastin' my breath here, ain't I? I mean, look at you. You... You just don't listen.",
+        "Is there somethin' about this you maybe don't understand? Or is it just that you don't care at all? Is that it?",
+        `Listen, ${safeName}. I COULD stop and leave it to you how to play. But where would that get us? Nowhere.`,
+        "How 'bout playin' a fantasy without any epic battles, no fightin' against the odds to save some magical realm? Wouldn't it be nice to just lay down your sword, pick a few pretty daisies, and just be...nice?",
+        "See my point? That ain't life. And this ain't a fantasy. I'm just askin' that you enjoy life here, and all of its...",
+        "...Hey...",
+        "Look at me when I'm talkin' to you!",
+        "If you hadn't reset in the first place...",
+        "...you wouldn't be here getting your tail chewed off! OK, you ain't got a tail, but it's still your own fault!",
+        "Whew...",
+        "You know, comin' out here's no picnic for me, either. It really wears a mole out. You think I'm jokin'?",
+        "Look at that tunnel, will ya? I have to dig one of those each and every time you reset! I'm only one mole!",
+        "So how about you and I stop wastin' each other's time? Whaddaya say?\n\nNO MORE RESETTING! All right? We got an understanding?"
+      ];
+    }
+
+    const RESETH_FOURTH_NO_WAY_VARIANTS = [
+      [
+        "WHAT?!? AARGH!!! You mockin' me?",
+        "If that's how you wanna be, then you just earned yourself the chance to hear me again from the beginnin'!",
+        "Yeah, you ain't laughin' now! You don't like that idea all that much, do ya, twerp? Well, I don't like it either!",
+        "So how about you and I stop wastin' each other's time? Whaddaya say?\n\nNO MORE RESETTING! All right? We got an understanding?"
+      ],
+      [
+        "Hmmm...",
+        "What do I gotta do to get it through your thick skull? Don't you ever listen to what I'm tellin' you here?",
+        "Be honest, you wanna get this over with and get back to the game, now, don't you? Am I right?",
+        "So how about you and I stop wastin' each other's time? Whaddaya say?\n\nNO MORE RESETTING! All right? We got an understanding?"
+      ]
+    ];
+
+    const RESETH_FOURTH_GOT_IT_DIALOGUE = [
+      "Well, all right, then! As long as we're square, I'm satisfied.",
+      "BUT, this is the last time! So help me, if I gotta do this just one more time, there's gonna be bad trouble.",
+      "Oh, and before I forget, there's one last thing:",
+      "Your hair! Wash it!!!",
+      "We clear? Now...\n\nSCRAM!"
+    ];
+
+    // =========================================================================
+    // 5TH & 6TH RESET DIALOGUE & TYPING CHALLENGE DATA
+    // =========================================================================
+    const RESETH_FIFTH_SENTENCES = [
+      "Yes, boss!",
+      "I stink",
+      "You are my sunshine!",
+      "I ❤️ Reseth",
+      "Reset = 💀",
+      "I am a dirty little cheater",
+      "Save before quitting!"
+    ];
+
+    const RESETH_OFFENSIVE_WORDS = [
+      'fuck', 'shit', 'bitch', 'asshole', 'bastard', 'damn', 'crap', 'dick', 'pussy', 'slut', 'whore', 'idiot', 'stupid', 'dumb', 'suck', 'hate'
+    ];
+
+    const RESETH_FIFTH_MAIN_DIALOGUE = [
+      "Graahh!!\n\nThink you're gettin' away with that?",
+      "You got another thing comin'!!!\n\nStop resetting! Hear me?\n\nWhat don't you get???",
+      "...Haah... ...Hoo...Phew...\n\nAll that screamin' at you...everythin' went all black... You see what you're doin' to me? To my health? Huh?",
+      "You know, you're the only one who pushes it this far. The only one who fails to understand. ONLY YOU!",
+      "You listenin' to me? 'Cause it looks to me like I gotta go through this whole song and dance again.",
+      "When the Reset Alarm sounds, somebody's gotta just drop everythin' and investigate. And that somebody's ME!",
+      "Yeah. I know. It's my job, and I gotta deal with it. I ain't lookin' for sympathy! But for cryin' out loud...",
+      "It don't matter if I'm eatin', takin' a hot mud bath, readin' Mole Monthly, or catchin' some z's...",
+      "When that alarm goes off, I gotta stop what I'm doin' and start diggin' like it was National Diggin' Day!",
+      "I know you can't see it from up there, but I'm only wearin' one sock! One! Who lives like this?",
+      "This job ain't glamorous, lemme tell ya. ...Hey... You laughin' at me? You CAN'T be laughin' at me!",
+      "I swear, just now your nose...it twitched! Yeah! I saw it! Your ugly little pug nose! It was twitchin' like mad!",
+      "OK. That's how you want it? All right. I see how it is. The chickens are comin' home to roost now, ain't they?",
+      "If that's how you wanna play, then that's how we'll play.",
+      "You know, I can see you forgettin' yourself and resettin' once...maybe twice. It could happen, I guess.",
+      "But this time? No two ways about it! It was deliberate! A calculated, cold-blooded act of villainy by a punk!",
+      "No more forgive-and-forget Reseth for you, pal. Oh, no. Until you show me some real regret, I ain't leavin'!",
+      "All right...what to do? They don't exactly cover hoodlums like you in the reset-prevention manual.",
+      "Askin' \"You got that?\" ain't workin'. All that gets me is lip service, and we both know what that's worth.",
+      "Hmmm... Got it! Yeah. That's good. OK, listen up, troublemaker. Here's what we're gonna do.",
+      "No more of your worthless, I'm-sorry-Mr.-Reseth garbage. Now you're gonna have to say EXACTLY what I tell you to!",
+      "You screw it up, you do it again! Let's see... Yeah, that'll work."
+    ];
+
+    const RESETH_FIFTH_CORRECT_DIALOGUE = [
+      "You're bein' sincere, right? You really, truly, no-joke, cross-your-heart-and-hope-to-die mean it? Well? Do ya? Punk?",
+      "That thing you just said? Don't forget it!",
+      "Well, all right then! As long as you and I are clear on that, I'm one happy, snappy mole.",
+      "But, for the love of dirt, no more! It stops here!",
+      "Oh, yeah, one last thing.\n\nBefore you go to bed? Brush those teeth, will ya?",
+      "Understood? Now...\n\nSCRAM!"
+    ];
+
+    function pickRandomResethSentence() {
+      const idx = Math.floor(Math.random() * RESETH_FIFTH_SENTENCES.length);
+      return RESETH_FIFTH_SENTENCES[idx];
+    }
+
+    function isOffensivePhrase(input) {
+      const lower = input.toLowerCase();
+      return RESETH_OFFENSIVE_WORDS.some((word) => lower.includes(word));
+    }
+
+    const resethModal = document.getElementById('resethModal');
+    const resethDialogueText = document.getElementById('resethDialogueText');
+    const resethPageIndicator = document.getElementById('resethPageIndicator');
+    const resethCountBadge = document.getElementById('resethCountBadge');
+    const resethNextBtn = document.getElementById('resethNextBtn');
+    const resethNoWayBtn = document.getElementById('resethNoWayBtn');
+    const resethPhraseForm = document.getElementById('resethPhraseForm');
+    const resethPhraseInput = document.getElementById('resethPhraseInput');
+
+    document.querySelectorAll('.reseth-symbol-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const sym = btn.getAttribute('data-insert-symbol') || '';
+        resethPhraseInput.value += sym;
+        resethPhraseInput.focus();
+      });
+    });
+
+    function triggerResethEncounter(resetCount, playerX, playerY) {
+      resethNpc.active = true;
+      resethNpc.resetCount = resetCount;
+      resethNpc.spawnOriginX = playerX;
+      resethNpc.spawnOriginY = playerY;
+      resethNpc.x = playerX + 90;
+      resethNpc.y = playerY + 10;
+      resethNpc.pageIndex = 0;
+      resethNpc.awaitingApproach = false;
+      resethNpc.awaitingLeaveTrigger = false;
+      resethNpc.lastLeashWarningAt = 0;
+      resethNpc.fourthPhase = 'approach';
+      resethNpc.noWayVariant = 0;
+      resethNpc.fifthPhase = 'main';
+      resethNpc.targetPhrase = pickRandomResethSentence();
+
+      resethPhraseForm.classList.add('hidden');
+      resethPhraseInput.value = '';
+      resethCountBadge.textContent = `Reset #${resetCount}`;
+
+      // 5th & 6th+ reset: Mr. Reseth waits underground until the player tries to leave the area!
+      if (resetCount >= 5) {
+        resethNpc.active = false; // Hidden underground until player tries to walk away
+        resethNpc.awaitingLeaveTrigger = true;
+        localAvatar.inCombat = false;
+        return;
+      }
+
+      localAvatar.inCombat = true; // Lock player movement while opening lines play
+      pointerTarget = null;
+
+      updateResethDialoguePage();
+      resethModal.classList.remove('hidden');
+      playResethTheme();
+    }
+
+    function getFourthResetActiveLines(playerName) {
+      if (resethNpc.fourthPhase === 'approach') {
+        return buildResethFourthApproachDialogue(playerName);
+      }
+      if (resethNpc.fourthPhase === 'main') {
+        return buildResethFourthMainDialogue(playerName);
+      }
+      if (resethNpc.fourthPhase === 'noWay') {
+        return RESETH_FOURTH_NO_WAY_VARIANTS[resethNpc.noWayVariant];
+      }
+      return RESETH_FOURTH_GOT_IT_DIALOGUE;
+    }
+
+    function updateResethDialoguePage() {
+      const currentName = activeProfile ? activeProfile.username : 'Scholar';
+      resethNoWayBtn.classList.add('hidden');
+      resethPhraseForm.classList.add('hidden');
+      resethNextBtn.classList.remove('hidden');
+
+      if (resethNpc.resetCount >= 5) {
+        if (resethNpc.fifthPhase === 'main') {
+          resethDialogueText.textContent = RESETH_FIFTH_MAIN_DIALOGUE[resethNpc.pageIndex];
+          resethPageIndicator.textContent = `${resethNpc.pageIndex + 1} / ${RESETH_FIFTH_MAIN_DIALOGUE.length}`;
+          resethNextBtn.textContent = 'Next ▶';
+          return;
+        }
+
+        if (resethNpc.fifthPhase === 'prompt') {
+          resethDialogueText.textContent = `You ready? Here goes... Say "${resethNpc.targetPhrase}"!`;
+          resethPageIndicator.textContent = 'REPEAT AFTER ME';
+          resethNextBtn.classList.add('hidden');
+          resethPhraseForm.classList.remove('hidden');
+          setTimeout(() => resethPhraseInput.focus(), 50);
+          return;
+        }
+
+        if (resethNpc.fifthPhase === 'wrong') {
+          resethDialogueText.textContent = `Wrong!\n\nNope! No way, twerp! Do it over! Try again!\n\nYou ready? Here goes...\n\nSay "${resethNpc.targetPhrase}"!`;
+          resethPageIndicator.textContent = 'TRY AGAIN';
+          resethNextBtn.classList.add('hidden');
+          resethPhraseForm.classList.remove('hidden');
+          setTimeout(() => resethPhraseInput.focus(), 50);
+          return;
+        }
+
+        if (resethNpc.fifthPhase === 'offensive') {
+          resethDialogueText.textContent = `Wh-what?!?! Gwaah!!!\n\nYou little hairball!!!\n\nYou think I wasn't gonna read what you wrote there? You oughta be ashamed of yourself! You worm!\n\nYou keep on like this, we're gonna be here for a long, LONG time. You readin' me?\n\nNow stop monkeyin' around and do as you're told, ${currentName}!\n\nYou ready? Here goes...\n\nSay "${resethNpc.targetPhrase}"!`;
+          resethPageIndicator.textContent = 'WATCH YOUR MOUTH!';
+          resethNextBtn.classList.add('hidden');
+          resethPhraseForm.classList.remove('hidden');
+          setTimeout(() => resethPhraseInput.focus(), 50);
+          return;
+        }
+
+        if (resethNpc.fifthPhase === 'correct') {
+          resethDialogueText.textContent = RESETH_FIFTH_CORRECT_DIALOGUE[resethNpc.pageIndex];
+          resethPageIndicator.textContent = `${resethNpc.pageIndex + 1} / ${RESETH_FIFTH_CORRECT_DIALOGUE.length}`;
+          resethNextBtn.textContent = resethNpc.pageIndex === RESETH_FIFTH_CORRECT_DIALOGUE.length - 1 ? 'SCRAM! 🐹💨' : 'Next ▶';
+          return;
+        }
+      }
+
+      if (resethNpc.resetCount === 4) {
+        if (resethNpc.awaitingApproach) {
+          resethDialogueText.textContent = "Get your tail over here! (Walk over to Mr. Reseth on the map!)";
+          resethPageIndicator.textContent = "APPROACH";
+          resethNextBtn.textContent = "Walk Over 👣";
+          return;
+        }
+
+        const lines = getFourthResetActiveLines(currentName);
+        resethDialogueText.textContent = lines[resethNpc.pageIndex];
+        resethPageIndicator.textContent = `${resethNpc.pageIndex + 1} / ${lines.length}`;
+
+        const isLastPage = resethNpc.pageIndex === lines.length - 1;
+
+        if (resethNpc.fourthPhase === 'approach') {
+          resethNextBtn.textContent = isLastPage ? "Go To Reseth 👣" : "Next ▶";
+        } else if (resethNpc.fourthPhase === 'main' || resethNpc.fourthPhase === 'noWay') {
+          if (isLastPage) {
+            resethNextBtn.textContent = "Got it!";
+            resethNoWayBtn.classList.remove('hidden');
+          } else {
+            resethNextBtn.textContent = "Next ▶";
+          }
+        } else {
+          resethNextBtn.textContent = isLastPage ? "SCRAM! 🐹💨" : "Next ▶";
+        }
+        return;
+      }
+
+      const lines = getActiveResethDialogue();
+      resethDialogueText.textContent = lines[resethNpc.pageIndex];
+      resethPageIndicator.textContent = `${resethNpc.pageIndex + 1} / ${lines.length}`;
+      resethNextBtn.textContent = resethNpc.pageIndex === lines.length - 1 ? 'SCRAM! 🐹💨' : 'Next ▶';
+    }
+
+    resethNoWayBtn.addEventListener('click', () => {
+      if (resethThemeAudio.paused && resethNpc.active) {
+        playResethTheme();
+      }
+      // Pick one of the two "No way!" scolding branches (alternating or random)
+      resethNpc.noWayVariant = Math.random() < 0.5 ? 0 : 1;
+      resethNpc.fourthPhase = 'noWay';
+      resethNpc.pageIndex = 0;
+      updateResethDialoguePage();
+    });
+
+    // Handles player typing Mr. Reseth's required sentence on 5th / 6th+ reset
+    resethPhraseForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (resethThemeAudio.paused && resethNpc.active) {
+        playResethTheme();
+      }
+
+      const typed = resethPhraseInput.value.trim();
+      resethPhraseInput.value = '';
+
+      if (typed === resethNpc.targetPhrase) {
+        resethNpc.fifthPhase = 'correct';
+        resethNpc.pageIndex = 0;
+        updateResethDialoguePage();
+        return;
+      }
+
+      if (isOffensivePhrase(typed)) {
+        resethNpc.fifthPhase = 'offensive';
+        updateResethDialoguePage();
+        return;
+      }
+
+      resethNpc.fifthPhase = 'wrong';
+      updateResethDialoguePage();
+    });
+
+    resethNextBtn.addEventListener('click', () => {
+      if (resethThemeAudio.paused && resethNpc.active) {
+        playResethTheme();
+      }
+
+      const currentName = activeProfile ? activeProfile.username : 'Scholar';
+
+      // 5th & 6th+ reset state machine
+      if (resethNpc.resetCount >= 5) {
+        if (resethNpc.fifthPhase === 'main') {
+          if (resethNpc.pageIndex < RESETH_FIFTH_MAIN_DIALOGUE.length - 1) {
+            resethNpc.pageIndex += 1;
+            updateResethDialoguePage();
+          } else {
+            resethNpc.fifthPhase = 'prompt';
+            updateResethDialoguePage();
+          }
+          return;
+        }
+
+        if (resethNpc.fifthPhase === 'correct') {
+          if (resethNpc.pageIndex < RESETH_FIFTH_CORRECT_DIALOGUE.length - 1) {
+            resethNpc.pageIndex += 1;
+            updateResethDialoguePage();
+          } else {
+            stopResethTheme();
+            resethModal.classList.add('hidden');
+            resethPhraseForm.classList.add('hidden');
+            resethNpc.active = false;
+            localAvatar.inCombat = false;
+            showGameToast('🐹 Mr. Reseth burrowed underground! Remember to click Save Progress before leaving.');
+          }
+          return;
+        }
+      }
+
+      // 4th reset multi-stage state machine
+      if (resethNpc.resetCount === 4) {
+        if (resethNpc.awaitingApproach) {
+          resethModal.classList.add('hidden');
+          showGameToast('🐹 Walk over to Mr. Reseth on the map—and don\'t try to run away!');
+          return;
+        }
+
+        const lines = getFourthResetActiveLines(currentName);
+
+        if (resethNpc.pageIndex < lines.length - 1) {
+          resethNpc.pageIndex += 1;
+          updateResethDialoguePage();
+          return;
+        }
+
+        // Handle end of each 4th-reset phase
+        if (resethNpc.fourthPhase === 'approach') {
+          resethNpc.awaitingApproach = true;
+          localAvatar.inCombat = false; // Unlock player movement so they can walk over to Reseth
+          resethModal.classList.add('hidden');
+          showGameToast('🐹 Mr. Reseth is waiting! Walk over to him.');
+          return;
+        }
+
+        if (resethNpc.fourthPhase === 'main' || resethNpc.fourthPhase === 'noWay') {
+          // Player selected "Got it!"
+          resethNpc.fourthPhase = 'gotIt';
+          resethNpc.pageIndex = 0;
+          updateResethDialoguePage();
+          return;
+        }
+
+        // End of 'gotIt' -> Reseth finally burrows away!
+        stopResethTheme();
+        resethModal.classList.add('hidden');
+        resethNpc.active = false;
+        localAvatar.inCombat = false;
+        showGameToast('🐹 Mr. Reseth burrowed underground! Remember to click Save Progress before leaving.');
+        return;
+      }
+
+      const lines = getActiveResethDialogue();
+      if (resethNpc.pageIndex < lines.length - 1) {
+        resethNpc.pageIndex += 1;
+        updateResethDialoguePage();
+      } else {
+        // Mr. Reseth burrows back underground
+        stopResethTheme();
+        resethModal.classList.add('hidden');
+        resethNpc.active = false;
+        localAvatar.inCombat = false;
+        showGameToast('🐹 Mr. Reseth burrowed underground! Remember to click Save Progress before leaving.');
+      }
+    });
+
+    /**
+     * Checks if the player is walking away from Mr. Reseth during the 4th reset approach
+     * or has reached him, AND triggers Mr. Reseth bursting from the ground on 5th/6th+ reset
+     * when the player tries to leave the spawn area.
+     */
+    function handleFourthResetApproach(prevX, prevY) {
+      // 5th & 6th+ reset: Mr. Reseth bursts from the ground when player tries to leave the area!
+      if (resethNpc.awaitingLeaveTrigger && resethNpc.resetCount >= 5) {
+        const distFromSpawn = Math.hypot(localAvatar.x - resethNpc.spawnOriginX, localAvatar.y - resethNpc.spawnOriginY);
+        if (distFromSpawn >= 75) {
+          resethNpc.awaitingLeaveTrigger = false;
+          resethNpc.active = true;
+          resethNpc.x = localAvatar.x + 70;
+          resethNpc.y = localAvatar.y + 10;
+          resethNpc.fifthPhase = 'main';
+          resethNpc.pageIndex = 0;
+          localAvatar.inCombat = true;
+          pointerTarget = null;
+          updateResethDialoguePage();
+          resethModal.classList.remove('hidden');
+          playResethTheme();
+        }
+        return;
+      }
+
+      if (!resethNpc.active || resethNpc.resetCount !== 4 || !resethNpc.awaitingApproach) {
+        return;
+      }
+
+      const prevDist = Math.hypot(prevX - resethNpc.x, prevY - resethNpc.y);
+      const currDist = Math.hypot(localAvatar.x - resethNpc.x, localAvatar.y - resethNpc.y);
+
+      // Player reached Mr. Reseth -> Launch his full 4th-reset lecture!
+      if (currDist <= 55) {
+        resethNpc.awaitingApproach = false;
+        resethNpc.fourthPhase = 'main';
+        resethNpc.pageIndex = 0;
+        localAvatar.inCombat = true;
+        pointerTarget = null;
+        updateResethDialoguePage();
+        resethModal.classList.remove('hidden');
+        playResethTheme();
+        return;
+      }
+
+      // Player is moving further away from Mr. Reseth instead of approaching
+      if (currDist > prevDist + 1.2) {
+        const now = Date.now();
+        if (now - resethNpc.lastLeashWarningAt > 2400) {
+          resethNpc.lastLeashWarningAt = now;
+          showGameToast(RESETH_FOURTH_LEASH_LINE, true);
+        }
+      }
+    }
+
+    /**
+     * Generates username from: FirstName + LastInitial + 4 Random Digits
+     */
+    function updateGeneratedUsername() {
+      const cleanFirst = firstNameInput.value.trim().replace(/[^a-zA-Z]/g, '');
+      const cleanLast = lastNameInput.value.trim().replace(/[^a-zA-Z]/g, '');
+
+      const formattedFirst = cleanFirst
+        ? cleanFirst.charAt(0).toUpperCase() + cleanFirst.slice(1).toLowerCase()
+        : 'Scholar';
+      const lastInitial = cleanLast ? cleanLast.charAt(0).toUpperCase() : 'X';
+
+      currentGeneratedUsername = `${formattedFirst}${lastInitial}${randomSuffix}`;
+      generatedUsernameDisplay.textContent = currentGeneratedUsername;
+    }
+
+    // Initialize default username preview
+    updateGeneratedUsername();
+
+    // Update live as user types First or Last name
+    firstNameInput.addEventListener('input', updateGeneratedUsername);
+    lastNameInput.addEventListener('input', updateGeneratedUsername);
+
+    // Reroll random numbers on click
+    rerollUsernameBtn.addEventListener('click', () => {
+      randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      updateGeneratedUsername();
+    });
+
+    /**
+     * Displays clean inline notifications instead of alert()
+     */
+    function showStatus(message, type = 'error') {
+      statusBanner.textContent = message;
+      statusBanner.classList.remove(
+        'hidden',
+        'bg-red-950/80', 'border-red-500/50', 'text-red-200',
+        'bg-emerald-950/80', 'border-emerald-500/50', 'text-emerald-200',
+        'bg-indigo-950/80', 'border-indigo-500/50', 'text-indigo-200'
+      );
+
+      if (type === 'error') {
+        statusBanner.classList.add('bg-red-950/80', 'border-red-500/50', 'text-red-200');
+      } else if (type === 'success') {
+        statusBanner.classList.add('bg-emerald-950/80', 'border-emerald-500/50', 'text-emerald-200');
+      } else {
+        statusBanner.classList.add('bg-indigo-950/80', 'border-indigo-500/50', 'text-indigo-200');
+      }
+    }
+
+    function clearStatus() {
+      statusBanner.classList.add('hidden');
+    }
+
+    // Tab Switching Logic
+    tabLogin.addEventListener('click', () => {
+      clearStatus();
+      tabLogin.classList.add('bg-indigo-600', 'text-white', 'shadow');
+      tabLogin.classList.remove('text-slate-400');
+      tabSignup.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+      tabSignup.classList.add('text-slate-400');
+
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+    });
+
+    tabSignup.addEventListener('click', () => {
+      clearStatus();
+      tabSignup.classList.add('bg-emerald-600', 'text-white', 'shadow');
+      tabSignup.classList.remove('text-slate-400');
+      tabLogin.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+      tabLogin.classList.add('text-slate-400');
+
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    });
+
+    // =========================================================================
+    // DEVELOPER DEBUG COMMANDS (CONSOLE + HUD BUTTON)
+    // =========================================================================
+    async function devResetResethCounter(newCount = 0) {
+      if (!auth.currentUser) {
+        console.warn('[DEV] Sign in first to reset your Reseth counter.');
+        return;
+      }
+
+      const targetCount = Math.max(0, Math.floor(Number(newCount) || 0));
+
+      try {
+        const profileRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'stats');
+        await setDoc(profileRef, {
+          resetCount: targetCount,
+          hasUnsavedSession: false
+        }, { merge: true });
+
+        if (activeProfile) {
+          activeProfile.resetCount = targetCount;
+          activeProfile.hasUnsavedSession = false;
+        }
+
+        // Dismiss active Mr. Reseth modal if open
+        stopResethTheme();
+        resethModal.classList.add('hidden');
+        resethNpc.active = false;
+        localAvatar.inCombat = false;
+
+        console.log(`[DEV] Reseth count set to ${targetCount} and hasUnsavedSession cleared.`);
+        showGameToast(`🛠️ Dev Debug: Reseth count reset to ${targetCount}!`);
+      } catch (err) {
+        console.error('[DEV] Failed to reset Reseth count:', err);
+        showGameToast('⚠️ Dev Debug: Failed to update Firestore.', true);
+      }
+    }
+
+    // Expose dev commands on window for browser DevTools console
+    window.resetResethCount = () => devResetResethCounter(0);
+    window.setResethCount = (count) => devResetResethCounter(count);
+    window.testReseth = (count = 1) => {
+      const target = Math.max(1, Math.floor(Number(count) || 1));
+      triggerResethEncounter(target, localAvatar.x, localAvatar.y);
+      if (target >= 5) {
+        showGameToast(`🛠️ Dev Debug: Reseth #${target} armed! Try walking away to make him burst out!`);
+      }
+      console.log(`[DEV] Triggered Mr. Reseth encounter #${target}`);
+    };
+
+    const devResetResethBtn = document.getElementById('devResetResethBtn');
+    if (devResetResethBtn) {
+      devResetResethBtn.addEventListener('click', () => devResetResethCounter(0));
+    }
+
+    // =========================================================================
+    // SAVE PROGRESS BUTTON (PERSISTS LEVEL, XP & POSITION TO FIRESTORE)
+    // =========================================================================
+    const saveProgressBtn = document.getElementById('saveProgressBtn');
+    const saveBtnText = document.getElementById('saveBtnText');
+
+    saveProgressBtn.addEventListener('click', async () => {
+      if (!auth.currentUser || !activeProfile) return;
+
+      saveProgressBtn.disabled = true;
+      saveBtnText.textContent = 'Saving...';
+
+      try {
+        const updatedStats = {
+          uid: auth.currentUser.uid,
+          username: activeProfile.username,
+          email: activeProfile.email,
+          role: activeProfile.role || selectedRole || 'student',
+          level: Number(localAvatar.level) || 1,
+          xp: Number(localAvatar.xp) || 0,
+          coins: Number(localAvatar.coins) || 0,
+          tools: getOwnedTools(),
+          x: Math.round(localAvatar.x ?? activeProfile.x ?? 1000),
+          y: Math.round(localAvatar.y ?? activeProfile.y ?? 1000),
+          hasUnsavedSession: false,
+          lastSavedAt: Date.now()
+        };
+
+        const profileRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'stats');
+        await setDoc(profileRef, updatedStats, { merge: true });
+
+        activeProfile = { ...activeProfile, ...updatedStats };
+        showGameToast(`✅ Progress saved! (Lvl ${updatedStats.level} • ${updatedStats.xp} XP • 🪙 ${updatedStats.coins})`);
+      } catch (err) {
+        console.error('Failed to save progress:', err);
+        showGameToast('⚠️ Could not save progress. Check connection.', true);
+      } finally {
+        saveProgressBtn.disabled = false;
+        saveBtnText.textContent = 'Save Progress';
+      }
+    });
+
+    function showGameToast(message, isError = false) {
+      const toast = document.getElementById('gameToast');
+      toast.textContent = message;
+      toast.classList.remove('hidden', 'border-emerald-500/50', 'text-emerald-200', 'border-rose-500/50', 'text-rose-200');
+      if (isError) {
+        toast.classList.add('border-rose-500/50', 'text-rose-200');
+      } else {
+        toast.classList.add('border-emerald-500/50', 'text-emerald-200');
+      }
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    // =========================================================================
+    // MULTIPLAYER 2D CANVAS ENGINE & AVATAR MOVEMENT
+    // =========================================================================
+    let socket = null;
+    let mySocketId = null;
+    let animationFrameId = null;
+    let worldConfig = { width: 2000, height: 2000, spawnX: 1000, spawnY: 1000, maxSpeed: 15 };
+    const worldPlayers = new Map();
+
+    // Local avatar state for immediate smooth rendering
+    const localAvatar = {
+      x: 1000,
+      y: 1000,
+      level: 1,
+      xp: 0,
+      coins: 0,
+      tools: [],
+      hp: 100,
+      maxHp: 100,
+      zone: 'ARITHMETIC_MEADOWS',
+      inCombat: false,
+      facing: 'right',
+      walkCycle: 0
+    };
+
+    // Deterministic World Coins across the map
+    const worldCoins = (() => {
+      const coins = [];
+      let seed = 900177;
+      const nextRand = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        return seed / 4294967296;
+      };
+
+      for (let i = 0; i < 45; i++) {
+        const x = Math.floor(140 + nextRand() * 1720);
+        const y = Math.floor(140 + nextRand() * 1720);
+        const value = nextRand() > 0.78 ? 25 : (nextRand() > 0.45 ? 10 : 5);
+        coins.push({
+          id: `coin_${i}`,
+          x,
+          y,
+          value,
+          collected: false
+        });
+      }
+      return coins;
+    })();
+
+    // Deterministic World Trees across all three zones
+    const worldTrees = (() => {
+      const trees = [];
+      let seed = 421337;
+      const nextRand = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        return seed / 4294967296;
+      };
+
+      for (let i = 0; i < 160; i++) {
+        const x = Math.floor(80 + nextRand() * 1840);
+        const y = Math.floor(80 + nextRand() * 1840);
+        const distFromSpawn = Math.hypot(x - 1000, y - 1000);
+
+        // Keep the central spawn plaza clear
+        if (distFromSpawn < 140) continue;
+
+        // Avoid placing trees too close together
+        if (trees.some((t) => Math.hypot(t.x - x, t.y - y) < 75)) continue;
+
+        let variant = 'meadow';
+        if (distFromSpawn >= 700) variant = 'algebra';
+        else if (distFromSpawn >= 350) variant = 'woods';
+
+        trees.push({
+          x,
+          y,
+          scale: 0.85 + nextRand() * 0.4,
+          variant
+        });
+      }
+      return trees;
+    })();
+
+    // Canvas & Input Setup
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+    const keysPressed = {};
+    let pointerTarget = null;
+
+    function resizeCanvas() {
+      const wrapper = document.getElementById('canvasWrapper');
+      if (!wrapper) return;
+      canvas.width = wrapper.clientWidth || window.innerWidth;
+      canvas.height = wrapper.clientHeight || window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.addEventListener('keydown', (e) => {
+      if (!e.key) return;
+      const lower = e.key.toLowerCase();
+      keysPressed[lower] = true;
+      pointerTarget = null;
+      if (lower === 'e' || e.key === ' ') {
+        shakeNearbyTree();
+      } else if (lower === 'f') {
+        attemptCatchBeeSwarmWithNet();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (!e.key) return;
+      keysPressed[e.key.toLowerCase()] = false;
+    });
+
+    function setPointerDestination(clientX, clientY) {
+      if (localAvatar.inCombat) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = clientX - rect.left;
+      const clickY = clientY - rect.top;
+
+      // Convert screen coordinates to world coordinates
+      const camX = localAvatar.x - canvas.width / 2;
+      const camY = localAvatar.y - canvas.height / 2;
+      pointerTarget = {
+        x: Math.max(0, Math.min(worldConfig.width, camX + clickX)),
+        y: Math.max(0, Math.min(worldConfig.height, camY + clickY))
+      };
+    }
+
+    canvas.addEventListener('mousedown', (e) => setPointerDestination(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        setPointerDestination(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    // Combat Encounter Trigger & Submission
+    const combatModal = document.getElementById('combatModal');
+    const challengeQuestion = document.getElementById('challengeQuestion');
+    const challengeAnswerInput = document.getElementById('challengeAnswerInput');
+
+    document.getElementById('encounterBtn').addEventListener('click', () => {
+      if (socket && socket.connected) {
+        socket.emit('combat:encounter');
+      }
+    });
+
+    document.getElementById('combatAnswerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = challengeAnswerInput.value.trim();
+      if (val === '' || !socket) return;
+      socket.emit('combat:answer', { answer: Number(val) });
+      challengeAnswerInput.value = '';
+      combatModal.classList.add('hidden');
+      localAvatar.inCombat = false;
+    });
+
+    function enterGameWorld(profile) {
+      resizeCanvas();
+      localAvatar.x = profile.x || 1000;
+      localAvatar.y = profile.y || 1000;
+      localAvatar.level = profile.level || 1;
+      localAvatar.xp = profile.xp || 0;
+      localAvatar.coins = Number(profile.coins) || 0;
+      localAvatar.tools = Array.isArray(profile.tools) ? [...profile.tools] : [];
+      localAvatar.maxHp = 100 + (localAvatar.level - 1) * 20;
+      localAvatar.hp = localAvatar.maxHp;
+
+      updateHudUI();
+
+      // Connect to Socket.io Server if available
+      if (typeof io !== 'undefined') {
+        socket = io();
+
+        socket.on('connect', () => {
+          mySocketId = socket.id;
+          socket.emit('player:join', {
+            uid: profile.uid,
+            username: profile.username,
+            level: localAvatar.level,
+            xp: localAvatar.xp
+          });
+        });
+
+        socket.on('world:init', (data) => {
+          worldConfig = data.worldConfig || worldConfig;
+          worldPlayers.clear();
+          (data.players || []).forEach((p) => worldPlayers.set(p.id, p));
+          if (data.self) {
+            localAvatar.x = data.self.x;
+            localAvatar.y = data.self.y;
+            localAvatar.level = data.self.level;
+            localAvatar.xp = data.self.xp;
+            localAvatar.hp = data.self.hp;
+            localAvatar.maxHp = data.self.maxHp;
+          }
+          updateHudUI();
+        });
+
+        socket.on('world:tick', (snapshot) => {
+          const seenIds = new Set();
+          snapshot.forEach((p) => {
+            seenIds.add(p.id);
+            worldPlayers.set(p.id, p);
+            if (p.id === mySocketId) {
+              localAvatar.level = p.level;
+              if (typeof p.xp === 'number') {
+                localAvatar.xp = p.xp;
+              }
+              localAvatar.hp = p.hp;
+              localAvatar.maxHp = p.maxHp;
+              localAvatar.zone = p.zone;
+              localAvatar.inCombat = p.inCombat;
+              // Reconcile position if server snapped it (e.g. respawn)
+              if (Math.hypot(localAvatar.x - p.x, localAvatar.y - p.y) > 60) {
+                localAvatar.x = p.x;
+                localAvatar.y = p.y;
+              }
+            }
+          });
+          for (const id of worldPlayers.keys()) {
+            if (!seenIds.has(id)) worldPlayers.delete(id);
+          }
+          document.getElementById('onlineCountText').textContent = `${Math.max(1, worldPlayers.size)} Scholar${worldPlayers.size === 1 ? '' : 's'} Online`;
+          updateHudUI();
+        });
+
+        socket.on('combat:challenge', (challenge) => {
+          localAvatar.inCombat = true;
+          pointerTarget = null;
+          challengeQuestion.textContent = challenge.question;
+          combatModal.classList.remove('hidden');
+          setTimeout(() => challengeAnswerInput.focus(), 50);
+        });
+
+        socket.on('combat:result', (res) => {
+          localAvatar.inCombat = false;
+          combatModal.classList.add('hidden');
+          let coinBonus = 0;
+          if (res.success) {
+            coinBonus = 10 * (res.stats?.level || localAvatar.level || 1);
+            localAvatar.coins = (Number(localAvatar.coins) || 0) + coinBonus;
+            if (activeProfile) {
+              activeProfile.coins = localAvatar.coins;
+            }
+          }
+          if (res.stats) {
+            localAvatar.level = res.stats.level;
+            localAvatar.xp = res.stats.xp;
+            localAvatar.hp = res.stats.hp;
+            localAvatar.maxHp = res.stats.maxHp;
+            localAvatar.x = res.stats.x;
+            localAvatar.y = res.stats.y;
+            if (activeProfile) {
+              activeProfile.level = res.stats.level;
+              activeProfile.xp = res.stats.xp;
+            }
+          }
+          updateHudUI();
+          const rewardMsg = coinBonus > 0 ? `${res.message} (+🪙 ${coinBonus} coins)` : res.message;
+          showGameToast(rewardMsg, !res.success);
+        });
+      }
+
+      if (!animationFrameId) {
+        gameLoop();
+      }
+    }
+
+    function disconnectGameWorld() {
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      worldPlayers.clear();
+    }
+
+    function updateHudUI() {
+      const name = activeProfile ? activeProfile.username : 'Scholar';
+      const xpNeeded = localAvatar.level * 100;
+      const hpPct = Math.max(0, Math.min(100, (localAvatar.hp / localAvatar.maxHp) * 100));
+      const xpPct = Math.max(0, Math.min(100, (localAvatar.xp / xpNeeded) * 100));
+
+      document.getElementById('hudUsername').textContent = name;
+      document.getElementById('hudLevelBadge').textContent = `Lvl ${localAvatar.level}`;
+      const coinsBadge = document.getElementById('hudCoinsBadge');
+      if (coinsBadge) {
+        coinsBadge.textContent = `🪙 ${Number(localAvatar.coins) || 0}`;
+      }
+      document.getElementById('hudHpBar').style.width = `${hpPct}%`;
+      document.getElementById('hudHpText').textContent = `${localAvatar.hp}/${localAvatar.maxHp}`;
+      document.getElementById('hudXpBar').style.width = `${xpPct}%`;
+      document.getElementById('hudXpText').textContent = `${localAvatar.xp}/${xpNeeded}`;
+      document.getElementById('hudZone').textContent = localAvatar.zone.replace(/_/g, ' ');
+      document.getElementById('hudCoords').textContent = `X: ${Math.round(localAvatar.x)}, Y: ${Math.round(localAvatar.y)}`;
+
+      const owned = getOwnedTools();
+      const bagEl = document.getElementById('hudToolsBag');
+      if (bagEl) {
+        if (owned.length === 0) {
+          bagEl.textContent = '🎒 Tools: None yet (Visit Tinker Pip for nets)';
+        } else {
+          const counts = {};
+          owned.forEach((id) => { counts[id] = (counts[id] || 0) + 1; });
+          const summary = Object.entries(counts).map(([id, qty]) => {
+            const meta = TOOL_CATALOG.find((t) => t.id === id);
+            return `${meta ? meta.icon : '🧰'} ${meta ? meta.name : id}${qty > 1 ? ` x${qty}` : ''}`;
+          }).join(' • ');
+          bagEl.textContent = `🎒 Tools: ${summary}`;
+        }
+      }
+    }
+
+    function updateMovement() {
+      if (localAvatar.inCombat) return;
+
+      let vx = 0;
+      let vy = 0;
+      const speed = 5;
+
+      if (keysPressed['w'] || keysPressed['arrowup']) vy -= 1;
+      if (keysPressed['s'] || keysPressed['arrowdown']) vy += 1;
+      if (keysPressed['a'] || keysPressed['arrowleft']) vx -= 1;
+      if (keysPressed['d'] || keysPressed['arrowright']) vx += 1;
+
+      if (vx !== 0 || vy !== 0) {
+        const len = Math.hypot(vx, vy);
+        vx = (vx / len) * speed;
+        vy = (vy / len) * speed;
+      } else if (pointerTarget) {
+        const dx = pointerTarget.x - localAvatar.x;
+        const dy = pointerTarget.y - localAvatar.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 6) {
+          vx = (dx / dist) * speed;
+          vy = (dy / dist) * speed;
+        } else {
+          pointerTarget = null;
+        }
+      }
+
+      if (vx !== 0 || vy !== 0) {
+        const prevX = localAvatar.x;
+        const prevY = localAvatar.y;
+
+        if (vx < 0) localAvatar.facing = 'left';
+        if (vx > 0) localAvatar.facing = 'right';
+        localAvatar.walkCycle += 0.22;
+
+        localAvatar.x = Math.max(0, Math.min(worldConfig.width, localAvatar.x + vx));
+        localAvatar.y = Math.max(0, Math.min(worldConfig.height, localAvatar.y + vy));
+
+        // Collect nearby gold coins
+        let collectedAnyCoin = false;
+        for (let i = 0; i < worldCoins.length; i++) {
+          const c = worldCoins[i];
+          if (c.collected) continue;
+          if (Math.hypot(localAvatar.x - c.x, localAvatar.y - c.y) <= 28) {
+            c.collected = true;
+            collectedAnyCoin = true;
+            localAvatar.coins = (Number(localAvatar.coins) || 0) + c.value;
+            if (activeProfile) activeProfile.coins = localAvatar.coins;
+            showGameToast(`🪙 Picked up ${c.value} coins!`);
+          }
+        }
+        if (collectedAnyCoin) {
+          updateHudUI();
+        }
+
+        // Prompt when walking near Tinker Pip's stall
+        const distToMerchant = Math.hypot(localAvatar.x - toolMerchantNpc.x, localAvatar.y - toolMerchantNpc.y);
+        if (distToMerchant <= 55) {
+          const now = Date.now();
+          if (now - lastMerchantPromptAt > 3500) {
+            lastMerchantPromptAt = now;
+            showGameToast('🧰 Tinker Pip: Click "Tool Shop" above to buy nets & gear!');
+          }
+        }
+
+        // Check Mr. Reseth 4th-reset approach/leash & 5th/6th+ reset leave trigger
+        handleFourthResetApproach(prevX, prevY);
+
+        // Send movement delta to authoritative server
+        if (socket && socket.connected) {
+          socket.emit('player:move', {
+            dx: localAvatar.x - prevX,
+            dy: localAvatar.y - prevY
+          });
+        }
+      }
+    }
+
+    function drawAvatar(ctx, x, y, username, level, isSelf, walkCycle) {
+      const stride = isSelf ? Math.sin(walkCycle) : 0;
+      const bob = isSelf ? Math.abs(Math.cos(walkCycle)) * -2.2 : 0;
+      const legSwing = stride * 5;
+      const armSwing = stride * 4.5;
+
+      const tunicColor = isSelf ? '#6366f1' : '#0ea5e9';
+      const tunicTrim = isSelf ? '#c7d2fe' : '#bae6fd';
+      const hairColor = isSelf ? '#451a03' : '#1e293b';
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Ground Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(0, 13, 14, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.translate(0, bob);
+
+      // Left & Right Animated Legs + Shoes
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 4;
+
+      // Left Leg
+      ctx.beginPath();
+      ctx.moveTo(-4, 2);
+      ctx.lineTo(-4 - legSwing, 11);
+      ctx.stroke();
+
+      // Right Leg
+      ctx.beginPath();
+      ctx.moveTo(4, 2);
+      ctx.lineTo(4 + legSwing, 11);
+      ctx.stroke();
+
+      // Little Boots
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.ellipse(-4 - legSwing, 12, 3.5, 2.2, 0, 0, Math.PI * 2);
+      ctx.ellipse(4 + legSwing, 12, 3.5, 2.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Back Arm
+      ctx.strokeStyle = '#fed7aa';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.moveTo(-8, -8);
+      ctx.lineTo(-10 + armSwing, -1);
+      ctx.stroke();
+
+      // Torso / Scholar Tunic
+      ctx.fillStyle = tunicColor;
+      ctx.beginPath();
+      ctx.roundRect(-8, -10, 16, 13, 5);
+      ctx.fill();
+      ctx.strokeStyle = tunicTrim;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Belt
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(-7, -1, 14, 2.5);
+
+      // Front Arm
+      ctx.strokeStyle = '#fed7aa';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.moveTo(8, -8);
+      ctx.lineTo(10 - armSwing, -1);
+      ctx.stroke();
+
+      // Human Head
+      ctx.fillStyle = '#fed7aa';
+      ctx.beginPath();
+      ctx.arc(0, -18, 8.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#e2a97e';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Hair Cap
+      ctx.fillStyle = hairColor;
+      ctx.beginPath();
+      ctx.arc(0, -20, 8.5, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.fill();
+
+      // Eyes
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(-3, -17.5, 1.5, 0, Math.PI * 2);
+      ctx.arc(3, -17.5, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pointed Scholar Wizard/Cap Accent
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(-9, -23);
+      ctx.lineTo(0, -32);
+      ctx.lineTo(9, -23);
+      ctx.closePath();
+      ctx.fill();
+
+      // Nameplate & Level Tag
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(`${username} (Lv.${level || 1})`, 0, -36);
+
+      ctx.restore();
+    }
+
+    function drawResethNpc(ctx, x, y) {
+      const wiggle = Math.sin(Date.now() * 0.015) * 2;
+      ctx.save();
+      ctx.translate(x + wiggle, y);
+
+      // Dirt Mound
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.ellipse(0, 10, 22, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mole Body
+      ctx.fillStyle = '#92400e';
+      ctx.beginPath();
+      ctx.arc(0, -4, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Angrier Brow & Helmet Accent
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(-10, -16, 20, 5);
+
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fde68a';
+      ctx.fillText('🐹 Mr. Reseth', 0, -25);
+
+      ctx.restore();
+    }
+
+    function drawToolMerchantNpc(ctx, x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Ground Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(0, 12, 16, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Merchant Body
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.arc(0, -4, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fde68a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Nameplate
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fcd34d';
+      ctx.fillText('🧰 Tinker Pip', 0, -24);
+
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // TREE SHAKING, BEE SWARM CHASE & /beechase.mp3 AUDIO
+    // =========================================================================
+    const beeChaseAudio = new Audio('/beechase.mp3');
+    beeChaseAudio.loop = true;
+    beeChaseAudio.volume = 0.65;
+
+    beeChaseAudio.addEventListener('error', () => {
+      console.error('Could not load /beechase.mp3! Make sure beechase.mp3 is placed inside your public/ folder.');
+    });
+
+    const stungAudio = new Audio('/stung.mp3');
+    stungAudio.volume = 0.75;
+
+    stungAudio.addEventListener('error', () => {
+      console.error('Could not load /stung.mp3! Make sure stung.mp3 is placed inside your public/ folder.');
+    });
+
+    function playStungSound() {
+      stungAudio.currentTime = 0;
+      stungAudio.play().catch(() => {});
+    }
+
+    const beeSwarmState = {
+      active: false,
+      x: 1000,
+      y: 1000,
+      speed: 3.85,
+      lastStingAt: 0,
+      lastCooldownToastAt: 0,
+      shakeAnimUntil: 0,
+      shakenTree: null
+    };
+
+    function playBeeChaseMusic() {
+      beeChaseAudio.play().catch(() => {});
+    }
+
+    function stopBeeChaseMusic() {
+      beeChaseAudio.pause();
+      beeChaseAudio.currentTime = 0;
+    }
+
+    function hasAnyNet() {
+      const owned = getOwnedTools();
+      return owned.includes('bug_net') || owned.includes('rune_net');
+    }
+
+    function findNearestTreeWithin(maxDist) {
+      let bestTree = null;
+      let bestDist = Infinity;
+      for (let i = 0; i < worldTrees.length; i++) {
+        const t = worldTrees[i];
+        const d = Math.hypot(localAvatar.x - t.x, localAvatar.y - t.y);
+        if (d <= maxDist && d < bestDist) {
+          bestDist = d;
+          bestTree = t;
+        }
+      }
+      return bestTree;
+    }
+
+    function spawnBeeSwarmFromTree(tree) {
+      beeSwarmState.active = true;
+      beeSwarmState.x = tree.x;
+      beeSwarmState.y = tree.y - 25;
+      beeSwarmState.lastStingAt = 0;
+      playBeeChaseMusic();
+      showGameToast('🐝 A BEE SWARM dropped from the tree! Run away or press F with a net to catch them!', true);
+    }
+
+    function shakeNearbyTree() {
+      if (localAvatar.inCombat) return;
+      const tree = findNearestTreeWithin(78);
+      if (!tree) {
+        return;
+      }
+
+      beeSwarmState.shakenTree = tree;
+      beeSwarmState.shakeAnimUntil = Date.now() + 550;
+
+      if (beeSwarmState.active) {
+        showGameToast('🐝 You\'re already being chased by a bee swarm!', true);
+        return;
+      }
+
+      // ~38% chance to drop an angry bee swarm; otherwise drop bonus coins/berries
+      const roll = Math.random();
+      if (roll < 0.38) {
+        spawnBeeSwarmFromTree(tree);
+      } else if (roll < 0.75) {
+        const bonusCoins = 5;
+        localAvatar.coins = (Number(localAvatar.coins) || 0) + bonusCoins;
+        if (activeProfile) activeProfile.coins = localAvatar.coins;
+        updateHudUI();
+        showGameToast(`🌳 Shook the tree! A shiny coin (+🪙 ${bonusCoins}) tumbled down!`);
+      } else {
+        showGameToast('🌳 Shook the tree! Just a few leaves fell down.');
+      }
+    }
+
+    function attemptCatchBeeSwarmWithNet() {
+      if (!beeSwarmState.active) return;
+
+      if (!hasAnyNet()) {
+        const now = Date.now();
+        if (now - beeSwarmState.lastCooldownToastAt > 1800) {
+          beeSwarmState.lastCooldownToastAt = now;
+          showGameToast('🕸️ You need a Catching Net or Arcane Rune Net from Tinker Pip to catch the bees!', true);
+        }
+        return;
+      }
+
+      const dist = Math.hypot(localAvatar.x - beeSwarmState.x, localAvatar.y - beeSwarmState.y);
+      if (dist > 95) {
+        showGameToast('🕸️ Get closer to the bee swarm and press F to swing your net!', true);
+        return;
+      }
+
+      const hasRuneNet = getOwnedTools().includes('rune_net');
+      const xpGain = hasRuneNet ? 35 : 20;
+      const coinGain = hasRuneNet ? 20 : 12;
+
+      beeSwarmState.active = false;
+      stopBeeChaseMusic();
+
+      localAvatar.xp = (Number(localAvatar.xp) || 0) + xpGain;
+      localAvatar.coins = (Number(localAvatar.coins) || 0) + coinGain;
+      if (activeProfile) {
+        activeProfile.xp = localAvatar.xp;
+        activeProfile.coins = localAvatar.coins;
+      }
+      updateHudUI();
+      showGameToast(`🕸️ Caught the entire bee swarm! +${xpGain} XP & +🪙 ${coinGain} coins!`);
+    }
+
+    function updateBeeSwarmChase() {
+      if (!beeSwarmState.active) return;
+
+      const dx = localAvatar.x - beeSwarmState.x;
+      const dy = localAvatar.y - beeSwarmState.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > 1) {
+        beeSwarmState.x += (dx / dist) * beeSwarmState.speed;
+        beeSwarmState.y += (dy / dist) * beeSwarmState.speed;
+      }
+
+      // Sting player when swarm catches up
+      if (dist <= 24) {
+        const now = Date.now();
+        if (now - beeSwarmState.lastStingAt > 1200) {
+          beeSwarmState.lastStingAt = now;
+          const stingDamage = 25;
+          localAvatar.hp = Math.max(0, localAvatar.hp - stingDamage);
+          beeSwarmState.active = false;
+          stopBeeChaseMusic();
+          playStungSound();
+          updateHudUI();
+
+          if (localAvatar.hp <= 0) {
+            localAvatar.hp = localAvatar.maxHp;
+            localAvatar.x = worldConfig.spawnX;
+            localAvatar.y = worldConfig.spawnY;
+            pointerTarget = null;
+            updateHudUI();
+            showGameToast('🐝 OUCH! Stung until knockout! Respawned back at the fountain.', true);
+          } else {
+            showGameToast(`🐝 STUNG! (-${stingDamage} HP) The bees scattered away!`, true);
+          }
+        }
+      }
+    }
+
+    function drawBeeSwarm(ctx, swarm) {
+      const now = Date.now();
+      const beeCount = 11;
+
+      // Swarm Aura
+      ctx.save();
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.16)';
+      ctx.beginPath();
+      ctx.arc(swarm.x, swarm.y, 26 + Math.sin(now * 0.02) * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let i = 0; i < beeCount; i++) {
+        const angle = now * 0.008 + (i * Math.PI * 2) / beeCount;
+        const radius = 10 + (i % 3) * 7;
+        const bx = swarm.x + Math.cos(angle) * radius;
+        const by = swarm.y + Math.sin(angle * 1.3) * radius * 0.75;
+
+        // Bee Body
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.ellipse(bx, by, 5, 3.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Stripes
+        ctx.fillStyle = '#1c1917';
+        ctx.fillRect(bx - 1.5, by - 3, 1.5, 6);
+        ctx.fillRect(bx + 1.5, by - 3, 1.5, 6);
+
+        // Wing Flutter
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.beginPath();
+        ctx.ellipse(bx, by - 4.5, 2.5, 1.8, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Warning Label
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fde047';
+      ctx.fillText('🐝 BEE SWARM! [F = Net]', swarm.x, swarm.y - 28);
+      ctx.restore();
+    }
+
+    function drawTree(ctx, tree) {
+      const { x, y, scale, variant } = tree;
+      const isShaking = beeSwarmState.shakenTree === tree && Date.now() < beeSwarmState.shakeAnimUntil;
+      const shakeOffsetX = isShaking ? Math.sin(Date.now() * 0.08) * 6 : 0;
+
+      ctx.save();
+      ctx.translate(x + shakeOffsetX, y);
+      ctx.scale(scale, scale);
+
+      // Ground Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
+      ctx.beginPath();
+      ctx.ellipse(0, 14, 24, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Trunk
+      ctx.fillStyle = variant === 'algebra' ? '#312e81' : '#5c3a21';
+      ctx.beginPath();
+      ctx.roundRect(-6, -14, 12, 28, 4);
+      ctx.fill();
+
+      if (variant === 'meadow') {
+        // Lush Round Oak Canopy (Arithmetic Meadows)
+        ctx.fillStyle = '#15803d';
+        ctx.beginPath();
+        ctx.arc(0, -28, 24, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(-8, -32, 16, 0, Math.PI * 2);
+        ctx.arc(9, -30, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#4ade80';
+        ctx.beginPath();
+        ctx.arc(-3, -38, 12, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (variant === 'woods') {
+        // Layered Pine Evergreen (Multiplication Woods)
+        const tiers = [
+          { yTop: -24, width: 28, height: 24, color: '#065f46' },
+          { yTop: -40, width: 22, height: 22, color: '#047857' },
+          { yTop: -54, width: 16, height: 20, color: '#10b981' }
+        ];
+        tiers.forEach((tier) => {
+          ctx.fillStyle = tier.color;
+          ctx.beginPath();
+          ctx.moveTo(0, tier.yTop - tier.height);
+          ctx.lineTo(-tier.width, tier.yTop);
+          ctx.lineTo(tier.width, tier.yTop);
+          ctx.closePath();
+          ctx.fill();
+        });
+      } else {
+        // Arcane Crystal Pine (Algebra Peaks)
+        const tiers = [
+          { yTop: -24, width: 26, height: 24, color: '#4338ca' },
+          { yTop: -42, width: 20, height: 22, color: '#6366f1' },
+          { yTop: -56, width: 14, height: 20, color: '#a855f7' }
+        ];
+        tiers.forEach((tier) => {
+          ctx.fillStyle = tier.color;
+          ctx.beginPath();
+          ctx.moveTo(0, tier.yTop - tier.height);
+          ctx.lineTo(-tier.width, tier.yTop);
+          ctx.lineTo(tier.width, tier.yTop);
+          ctx.closePath();
+          ctx.fill();
+        });
+
+        // Glowing Arcane Star Tip
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.arc(0, -78, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function renderWorld() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const camX = localAvatar.x - canvas.width / 2;
+      const camY = localAvatar.y - canvas.height / 2;
+
+      ctx.save();
+      ctx.translate(-camX, -camY);
+
+      // Base Outer Zone (Algebra Peaks - Slate/Purple)
+      ctx.fillStyle = '#1e1b4b';
+      ctx.fillRect(0, 0, worldConfig.width, worldConfig.height);
+
+      // Middle Zone Ring (Multiplication Woods - Deep Emerald)
+      ctx.fillStyle = '#064e3b';
+      ctx.beginPath();
+      ctx.arc(worldConfig.spawnX, worldConfig.spawnY, 700, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Center Safe Zone Ring (Arithmetic Meadows - Lush Meadow Green)
+      ctx.fillStyle = '#14532d';
+      ctx.beginPath();
+      ctx.arc(worldConfig.spawnX, worldConfig.spawnY, 350, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Subtle Coordinate Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      const gridSize = 100;
+      for (let gx = 0; gx <= worldConfig.width; gx += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, worldConfig.height);
+        ctx.stroke();
+      }
+      for (let gy = 0; gy <= worldConfig.height; gy += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(worldConfig.width, gy);
+        ctx.stroke();
+      }
+
+      // World Border Wall
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(0, 0, worldConfig.width, worldConfig.height);
+
+      // Spawn Plaza Rune Circle
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(worldConfig.spawnX, worldConfig.spawnY, 65, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Render Collectible Gold Coins
+      const pulse = Math.sin(Date.now() * 0.006) * 2.5;
+      for (let i = 0; i < worldCoins.length; i++) {
+        const c = worldCoins[i];
+        if (c.collected) continue;
+
+        ctx.save();
+        ctx.translate(c.x, c.y + pulse * 0.5);
+
+        // Coin Glow
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.22)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 14 + pulse * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Gold Coin Disc
+        ctx.fillStyle = c.value >= 25 ? '#f59e0b' : '#facc15';
+        ctx.beginPath();
+        ctx.arc(0, 0, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Coin Symbol
+        ctx.fillStyle = '#78350f';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('$', 0, 0.5);
+
+        ctx.restore();
+      }
+
+      // Click/Tap Destination Marker
+      if (pointerTarget) {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(pointerTarget.x, pointerTarget.y, 12, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Y-Sorted Render Queue so players walk naturally behind and in front of trees
+      const renderables = [];
+
+      // Queue visible trees within camera viewport
+      const pad = 120;
+      for (let i = 0; i < worldTrees.length; i++) {
+        const t = worldTrees[i];
+        if (
+          t.x >= camX - pad &&
+          t.x <= camX + canvas.width + pad &&
+          t.y >= camY - pad &&
+          t.y <= camY + canvas.height + pad
+        ) {
+          renderables.push({ type: 'tree', y: t.y, data: t });
+        }
+      }
+
+      // Queue other connected scholars
+      worldPlayers.forEach((p) => {
+        if (p.id === mySocketId) return;
+        renderables.push({ type: 'otherPlayer', y: p.y, data: p });
+      });
+
+      // Queue local player avatar
+      const myName = activeProfile ? activeProfile.username : 'Scholar';
+      renderables.push({
+        type: 'selfPlayer',
+        y: localAvatar.y,
+        data: { x: localAvatar.x, y: localAvatar.y, username: myName, level: localAvatar.level, walkCycle: localAvatar.walkCycle }
+      });
+
+      // Queue Mr. Reseth if active
+      if (resethNpc.active) {
+        renderables.push({ type: 'reseth', y: resethNpc.y, data: resethNpc });
+      }
+
+      // Queue Tool Merchant NPC
+      renderables.push({ type: 'toolMerchant', y: toolMerchantNpc.y, data: toolMerchantNpc });
+
+      // Sort by Y coordinate (back-to-front painter's algorithm)
+      renderables.sort((a, b) => a.y - b.y);
+
+      for (let i = 0; i < renderables.length; i++) {
+        const item = renderables[i];
+        if (item.type === 'tree') {
+          drawTree(ctx, item.data);
+        } else if (item.type === 'otherPlayer') {
+          drawAvatar(ctx, item.data.x, item.data.y, item.data.username, item.data.level, false, 0);
+        } else if (item.type === 'selfPlayer') {
+          drawAvatar(ctx, item.data.x, item.data.y, item.data.username, item.data.level, true, item.data.walkCycle);
+        } else if (item.type === 'reseth') {
+          drawResethNpc(ctx, item.data.x, item.data.y);
+        } else if (item.type === 'toolMerchant') {
+          drawToolMerchantNpc(ctx, item.data.x, item.data.y);
+        }
+      }
+
+      if (beeSwarmState.active) {
+        drawBeeSwarm(ctx, beeSwarmState);
+      }
+
+      ctx.restore();
+    }
+
+    function gameLoop() {
+      updateMovement();
+      updateBeeSwarmChase();
+      renderWorld();
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    // Friendly Firebase Auth Error Translator
+    function formatFirebaseError(code) {
+      switch (code) {
+        case 'auth/email-already-in-use':
+          return 'That email is already registered. Try logging in instead!';
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+        case 'auth/user-not-found':
+          return 'Invalid email or password. Please check your credentials.';
+        case 'auth/weak-password':
+          return 'Password must be at least 6 characters long.';
+        case 'auth/invalid-email':
+          return 'Please enter a valid email address.';
+        case 'auth/popup-closed-by-user':
+          return 'Google sign-in popup was closed before finishing.';
+        case 'auth/popup-blocked':
+          return 'Sign-in popup was blocked by your browser. Please allow popups and try again.';
+        default:
+          return `Authentication error (${code || 'unknown'}). Please try again.`;
+      }
+    }
+
+    // Google Sign-In Button Handler
+    const googleProvider = new GoogleAuthProvider();
+    const googleSignInBtn = document.getElementById('googleSignInBtn');
+    if (googleSignInBtn) {
+      googleSignInBtn.addEventListener('click', async () => {
+        clearStatus();
+        googleSignInBtn.disabled = true;
+        try {
+          await signInWithPopup(auth, googleProvider);
+        } catch (err) {
+          showStatus(formatFirebaseError(err.code), 'error');
+        } finally {
+          googleSignInBtn.disabled = false;
+        }
+      });
+    }
+
+    // Login Form Submit
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearStatus();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginSubmitBtn');
+      btn.disabled = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+        showStatus(formatFirebaseError(err.code), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Signup Form Submit
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearStatus();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const btn = document.getElementById('signupSubmitBtn');
+      btn.disabled = true;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName: currentGeneratedUsername });
+        const profileRef = doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'stats');
+        await setDoc(profileRef, {
+          uid: cred.user.uid,
+          username: currentGeneratedUsername,
+          email,
+          role: selectedRole || 'student',
+          level: 1,
+          xp: 0,
+          coins: 0,
+          tools: [],
+          x: 1000,
+          y: 1000,
+          hasUnsavedSession: true,
+          resetCount: 0
+        });
+      } catch (err) {
+        showStatus(formatFirebaseError(err.code), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Logout / Exit Button
+    document.getElementById('gameLogoutBtn').addEventListener('click', async () => {
+      stopResethTheme();
+      stopBeeChaseMusic();
+      beeSwarmState.active = false;
+      disconnectGameWorld();
+      await signOut(auth);
+    });
+
+    // Auth State Observer (Enters Game World & Checks Mr. Reseth)
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        activeProfile = null;
+        gameScreen.classList.add('hidden');
+        authCard.classList.remove('hidden');
+        authBackground.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'stats');
+        const snap = await getDoc(profileRef);
+        let data = snap.exists() ? snap.data() : {
+          uid: user.uid,
+          username: user.displayName || currentGeneratedUsername || 'Scholar1000',
+          email: user.email || '',
+          level: 1,
+          xp: 0,
+          coins: 0,
+          tools: [],
+          x: 1000,
+          y: 1000,
+          hasUnsavedSession: false,
+          resetCount: 0
+        };
+
+        const exitedWithoutSaving = Boolean(data.hasUnsavedSession);
+        const nextResetCount = exitedWithoutSaving ? (Number(data.resetCount) || 0) + 1 : (Number(data.resetCount) || 0);
+
+        data = {
+          ...data,
+          uid: user.uid,
+          hasUnsavedSession: true,
+          resetCount: nextResetCount
+        };
+
+        await setDoc(profileRef, {
+          hasUnsavedSession: true,
+          resetCount: nextResetCount
+        }, { merge: true });
+
+        activeProfile = data;
+        authCard.classList.add('hidden');
+        authBackground.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+
+        enterGameWorld(activeProfile);
+
+        if (exitedWithoutSaving) {
+          triggerResethEncounter(nextResetCount, activeProfile.x || 1000, activeProfile.y || 1000);
+        }
+      } catch (err) {
+        console.error('Error loading scholar profile:', err);
+        showStatus('Failed to load your scholar profile. Please try again.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathLand MMORPG — Teacher Portal & Dashboard</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cinzel for Fantasy Headers & Inter for UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #083344 0%, #0f172a 55%, #020617 100%);
+      min-height: 100vh;
+    }
+    .font-fantasy {
+      font-family: 'Cinzel', serif;
+    }
+    @keyframes floatGlyph {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.12; }
+      50% { transform: translateY(-14px) rotate(5deg); opacity: 0.24; }
+    }
+    .floating-glyph {
+      animation: floatGlyph 7s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      header,
+      #portalBanner,
+      #teacherAuthSection,
+      #teacherDashboardSection,
+      #teacherFaqSection,
+      .floating-glyph,
+      .no-print {
+        display: none !important;
+      }
+      #printableLoginSheet {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: #0f172a !important;
+        background: #ffffff !important;
+      }
+    }
+  </style>
+</head>
+<body class="text-slate-100 relative overflow-x-hidden">
+
+  <!-- Ambient Floating Math Symbols -->
+  <div aria-hidden="true" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <span class="floating-glyph absolute top-14 left-8 text-6xl font-fantasy text-cyan-400">∑</span>
+    <span class="floating-glyph absolute top-36 right-12 text-7xl font-fantasy text-indigo-400" style="animation-delay: 1.5s;">π</span>
+    <span class="floating-glyph absolute bottom-24 left-1/4 text-6xl font-fantasy text-emerald-400" style="animation-delay: 2.8s;">√x</span>
+    <span class="floating-glyph absolute bottom-16 right-1/5 text-7xl font-fantasy text-amber-400" style="animation-delay: 4s;">∞</span>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="relative z-10 border-b border-cyan-500/25 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <a href="/home.html" class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-600 to-indigo-600 flex items-center justify-center text-2xl shadow-lg border border-white/15">
+          🍎
+        </div>
+        <div>
+          <span class="font-fantasy text-xl sm:text-2xl font-black tracking-wider text-white block leading-none">MATHLAND</span>
+          <span class="text-[11px] uppercase tracking-widest text-cyan-300 font-semibold">Teacher Portal &amp; Dashboard</span>
+        </div>
+      </a>
+
+      <nav class="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-semibold">
+        <a href="/home.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">Home</a>
+        <a href="/home.html#teachers" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition">Guide</a>
+        <a href="/index.html" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 transition">
+          Scholar Portal
+        </a>
+        <button id="headerSignOutBtn" type="button"
+          class="hidden px-3.5 py-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-200 border border-rose-500/40 transition">
+          Sign Out
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+    <!-- Status Banner -->
+    <div id="portalBanner" class="hidden mb-6 p-3.5 rounded-2xl text-xs sm:text-sm font-medium border"></div>
+
+    <!-- =================================================================== -->
+    <!-- TEACHER SIGN-IN & SIGN-UP VIEW                                      -->
+    <!-- =================================================================== -->
+    <section id="teacherAuthSection" class="max-w-md mx-auto bg-slate-900/90 backdrop-blur-xl border border-cyan-500/30 rounded-3xl shadow-2xl shadow-cyan-950/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-cyan-700 via-indigo-700 to-cyan-800 p-6 text-center border-b border-cyan-400/20">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-950/40 border border-white/20 flex items-center justify-center text-3xl mb-3">
+          🏫
+        </div>
+        <h1 class="font-fantasy text-2xl sm:text-3xl font-black text-white tracking-wide">TEACHER PORTAL</h1>
+        <p class="text-cyan-100 text-xs uppercase tracking-widest mt-1 font-semibold">Educator Account &amp; Class Dashboard</p>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <!-- Auth Mode Tabs -->
+        <div class="grid grid-cols-2 bg-slate-950/90 p-1.5 rounded-2xl border border-slate-800 mb-6">
+          <button id="teacherTabLogin" type="button"
+            class="py-2.5 text-xs sm:text-sm font-bold rounded-xl bg-cyan-600 text-white shadow transition">
+            Teacher Login
+          </button>
+          <button id="teacherTabSignup" type="button"
+            class="py-2.5 text-xs sm:text-sm font-bold rounded-xl text-slate-400 hover:text-white transition">
+            Teacher Sign Up
+          </button>
+        </div>
+
+        <!-- Teacher Login Form -->
+        <form id="teacherLoginForm" class="space-y-4">
+          <div>
+            <label for="teacherLoginEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">School or Work Email</label>
+            <input id="teacherLoginEmail" type="email" required placeholder="teacher@school.edu"
+              class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30 transition" />
+          </div>
+          <div>
+            <label for="teacherLoginPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+            <input id="teacherLoginPassword" type="password" required placeholder="••••••••"
+              class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30 transition" />
+          </div>
+          <button id="teacherLoginBtn" type="submit"
+            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-cyan-950/60 active:scale-[0.99] transition">
+            Open Teacher Dashboard →
+          </button>
+
+          <div class="relative flex items-center py-1">
+            <div class="flex-grow border-t border-slate-800"></div>
+            <span class="px-3 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">or</span>
+            <div class="flex-grow border-t border-slate-800"></div>
+          </div>
+
+          <button id="teacherGoogleBtn" type="button"
+            class="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold shadow active:scale-[0.99] transition flex items-center justify-center gap-2.5 border border-slate-200">
+            <span>🌐</span>
+            <span>Sign in with Google</span>
+          </button>
+        </form>
+
+        <!-- Teacher Sign-Up Form -->
+        <form id="teacherSignupForm" class="space-y-4 hidden">
+          <div>
+            <label for="teacherFullName" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Full Name &amp; Title</label>
+            <input id="teacherFullName" type="text" required maxlength="40" placeholder="Ms. Elena Vance"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="teacherSchoolName" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">School / Program</label>
+              <input id="teacherSchoolName" type="text" required maxlength="40" placeholder="Oakridge Academy"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+            </div>
+            <div>
+              <label for="teacherGradeBand" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Grade / Focus</label>
+              <select id="teacherGradeBand"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white focus:outline-none focus:border-emerald-500 transition">
+                <option value="Grades 1–3 (Arithmetic)">Grades 1–3 (Arithmetic)</option>
+                <option value="Grades 4–6 (Mult/Div)">Grades 4–6 (Mult/Div)</option>
+                <option value="Grades 7–8 (Algebra)">Grades 7–8 (Algebra)</option>
+                <option value="Mixed / Intervention">Mixed / Intervention</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="teacherSignupEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+            <input id="teacherSignupEmail" type="email" required placeholder="elena@oakridge.edu"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+          </div>
+
+          <div>
+            <label for="teacherSignupPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password (min 6 chars)</label>
+            <input id="teacherSignupPassword" type="password" required minlength="6" placeholder="••••••••"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition" />
+          </div>
+
+          <button id="teacherSignupBtn" type="submit"
+            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-950/60 active:scale-[0.99] transition">
+            Create Teacher Account &amp; Dashboard ✨
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TEACHER DASHBOARD VIEW (SHOWN WHEN SIGNED IN)                        -->
+    <!-- =================================================================== -->
+    <section id="teacherDashboardSection" class="hidden space-y-8">
+      <!-- Dashboard Welcome Banner -->
+      <div class="bg-slate-900/90 backdrop-blur-xl border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1.5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-200 text-xs font-bold">
+            <span>🍎</span>
+            <span id="dashSchoolLabel">Oakridge Academy • Grades 1–3 (Arithmetic)</span>
+          </div>
+          <h1 id="dashTeacherGreeting" class="font-fantasy text-2xl sm:text-4xl font-black text-white">
+            Welcome, Teacher
+          </h1>
+          <p id="dashTeacherEmail" class="text-xs sm:text-sm text-slate-400"></p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="printStudentLoginsBtn" type="button"
+            class="px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-extrabold shadow-lg transition">
+            🖨️ Print Student Login
+          </button>
+          <button id="saveDashboardBtn" type="button"
+            class="px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-bold shadow-lg transition">
+            💾 Save Classroom Plan
+          </button>
+          <a href="/index.html"
+            class="px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-bold shadow-lg transition">
+            ⚔️ Launch Scholar Portal
+          </a>
+        </div>
+      </div>
+
+      <!-- Summary KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="bg-slate-900/85 border border-slate-800 rounded-2xl p-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Roster Scholars</span>
+          <div id="kpiRosterCount" class="text-3xl font-extrabold text-cyan-300 mt-1">0</div>
+          <p class="text-xs text-slate-400 mt-1">Tracked in your classroom roster</p>
+        </div>
+
+        <div class="bg-slate-900/85 border border-slate-800 rounded-2xl p-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Average Scholar Level</span>
+          <div id="kpiAvgLevel" class="text-3xl font-extrabold text-amber-300 mt-1">1.0</div>
+          <p class="text-xs text-slate-400 mt-1">Across listed students</p>
+        </div>
+
+        <div class="bg-slate-900/85 border border-slate-800 rounded-2xl p-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Focus Biome</span>
+          <div id="kpiFocusBiome" class="text-lg font-extrabold text-emerald-300 mt-2">Arithmetic Meadows</div>
+          <p class="text-xs text-slate-400 mt-1">Current session target zone</p>
+        </div>
+      </div>
+
+      <!-- Two-Column Workspace: Session Goal & Roster -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Column: Session Assignment & Add Scholar -->
+        <div class="space-y-6">
+          <!-- Session Focus & Goal Card -->
+          <div class="bg-slate-900/90 border border-indigo-500/30 rounded-3xl p-6 space-y-4 shadow-xl">
+            <h2 class="font-fantasy text-lg font-bold text-white">🎯 Session Focus &amp; Goal</h2>
+
+            <div>
+              <label for="focusBiomeSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Recommended Biome</label>
+              <select id="focusBiomeSelect"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500">
+                <option value="Arithmetic Meadows">🌿 Arithmetic Meadows (Lv. 1–5: + / -)</option>
+                <option value="Multiplication Woods">🌲 Multiplication Woods (Lv. 6–12: × / ÷)</option>
+                <option value="Algebra Peaks">🔮 Algebra Peaks (Lv. 13+: Linear Equations)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="targetXpInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Target XP Goal per Scholar</label>
+              <input id="targetXpInput" type="number" min="10" max="10000" step="10" value="150"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500" />
+            </div>
+
+            <div>
+              <label for="sessionNoteInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Class Reminder / Note</label>
+              <textarea id="sessionNoteInput" rows="3" placeholder="e.g., Solve 5 runes and click Save Progress before leaving!"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-500"></textarea>
+            </div>
+          </div>
+
+          <!-- Add Scholar to Roster Card -->
+          <form id="addScholarForm" class="bg-slate-900/90 border border-emerald-500/30 rounded-3xl p-6 space-y-3.5 shadow-xl">
+            <h2 class="font-fantasy text-lg font-bold text-white">➕ Add Scholar to Roster</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label for="scholarFirstNameInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">First Name</label>
+                <input id="scholarFirstNameInput" type="text" required maxlength="16" placeholder="Alex"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+              </div>
+              <div>
+                <label for="scholarLastInitialInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Last Initial</label>
+                <input id="scholarLastInitialInput" type="text" required maxlength="1" placeholder="R"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm text-center uppercase placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+              </div>
+            </div>
+            <div>
+              <label for="scholarGradeSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Grade</label>
+              <select id="scholarGradeSelect"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-emerald-500">
+                <option value="K">Kindergarten (K)</option>
+                <option value="1st Grade">1st Grade</option>
+                <option value="2nd Grade">2nd Grade</option>
+                <option value="3rd Grade">3rd Grade</option>
+                <option value="4th Grade">4th Grade</option>
+                <option value="5th Grade">5th Grade</option>
+                <option value="6th Grade">6th Grade</option>
+                <option value="7th Grade">7th Grade</option>
+                <option value="8th Grade">8th Grade</option>
+              </select>
+            </div>
+            <button type="submit"
+              class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow transition">
+              Add Scholar
+            </button>
+          </form>
+        </div>
+
+        <!-- Right Column (2 spans): Classroom Scholar Roster Table -->
+        <div class="lg:col-span-2 bg-slate-900/90 border border-cyan-500/30 rounded-3xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <div>
+              <h2 class="font-fantasy text-xl font-bold text-white">📋 Classroom Scholar Roster</h2>
+              <p class="text-xs text-slate-400">View student grades, award XP, or remove entries from your class roster.</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 uppercase text-[11px] tracking-wider">
+                  <th class="py-2.5 pr-3">Scholar</th>
+                  <th class="py-2.5 px-2">Grade</th>
+                  <th class="py-2.5 px-2">XP Progress</th>
+                  <th class="py-2.5 pl-2 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rosterTableBody" class="divide-y divide-slate-800/70"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PRINTABLE STUDENT LOGIN CARDS SHEET (SHOWN ON PRINT)                  -->
+    <!-- =================================================================== -->
+    <section id="printableLoginSheet" class="hidden space-y-6">
+      <div class="border-b-2 border-slate-900 pb-4 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-600">MathLand MMORPG • Student Login Passes</p>
+          <h2 id="printSheetTitle" class="text-2xl font-black text-slate-900 mt-1">Classroom Roster</h2>
+          <p id="printSheetMeta" class="text-sm text-slate-700 mt-0.5"></p>
+        </div>
+        <div class="text-right text-xs text-slate-700">
+          <div><strong>Portal URL:</strong> <span id="printPortalUrl"></span></div>
+          <div><strong>Target Goal:</strong> <span id="printTargetGoal"></span></div>
+        </div>
+      </div>
+
+      <p id="printSessionNote" class="text-sm italic text-slate-800 bg-slate-100 border border-slate-300 rounded-xl p-3"></p>
+
+      <div id="printCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- FREQUENTLY ASKED QUESTIONS (FAQ)                                    -->
+    <!-- =================================================================== -->
+    <section id="teacherFaqSection" class="mt-10 bg-slate-900/85 backdrop-blur-xl border border-cyan-500/25 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-[11px] uppercase tracking-widest font-bold text-cyan-400">Educator &amp; Family Answers</span>
+          <h2 class="font-fantasy text-2xl font-bold text-white">❓ Frequently Asked Questions</h2>
+        </div>
+        <span class="text-xs text-slate-400">Quick answers about gameplay, saving &amp; classroom use</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <details open class="group rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
+          <summary class="cursor-pointer font-bold text-cyan-300 list-none flex items-center justify-between gap-2">
+            <span>"Is this game like Prodigy?"</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <p class="mt-2.5 text-slate-300 leading-relaxed">
+            Yes, in spirit! Like Prodigy, MathLand blends a fantasy world with math challenges that scale by skill level—covering addition &amp; subtraction, multiplication &amp; division, and linear equations—while awarding XP and coins so scholars can level up and gear up.
+          </p>
+        </details>
+
+        <details open class="group rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
+          <summary class="cursor-pointer font-bold text-emerald-300 list-none flex items-center justify-between gap-2">
+            <span>"This is similar to Animal Crossing"</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <p class="mt-2.5 text-slate-300 leading-relaxed">
+            Spot on! Shaking trees for surprise coins or angry bee swarms, running from bees or snagging them with a bug net, chatting with quirky NPCs like Tinker Pip, and getting lectured by Mr. Reseth when you exit without saving draw playful inspiration from cozy life-sim classics.
+          </p>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
+          <summary class="cursor-pointer font-bold text-amber-300 list-none flex items-center justify-between gap-2">
+            <span>Why do students need to click "Save Progress"?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <p class="mt-2.5 text-slate-300 leading-relaxed">
+            Clicking <strong>Save Progress</strong> in the Scholar Portal saves a student's Level, XP, coins, tools, and position to Firestore. Closing or refreshing without saving marks the session unsaved and sends Mr. Reseth out to remind them!
+          </p>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
+          <summary class="cursor-pointer font-bold text-indigo-300 list-none flex items-center justify-between gap-2">
+            <span>How do I print student login cards for class?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <p class="mt-2.5 text-slate-300 leading-relaxed">
+            Add your scholars using their First Name, Last Initial, and Grade, set your session focus and XP goal, and click <strong>Print Student Login</strong> to open a print-ready sheet of scholar pass cards.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      updateProfile,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwTZJ0pBqvNc4Y1uGkD0O0TB9q2l8niCU",
+      authDomain: "mathland-852a2.firebaseapp.com",
+      projectId: "mathland-852a2",
+      storageBucket: "mathland-852a2.firebasestorage.app",
+      messagingSenderId: "196050112063",
+      appId: "1:196050112063:web:ca71d1099b45f4d3bfb28a",
+      measurementId: "G-DTHZ7RBQXE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mathland-852a2';
+    const googleProvider = new GoogleAuthProvider();
+
+    // DOM References
+    const portalBanner = document.getElementById('portalBanner');
+    const teacherAuthSection = document.getElementById('teacherAuthSection');
+    const teacherDashboardSection = document.getElementById('teacherDashboardSection');
+    const headerSignOutBtn = document.getElementById('headerSignOutBtn');
+
+    const teacherTabLogin = document.getElementById('teacherTabLogin');
+    const teacherTabSignup = document.getElementById('teacherTabSignup');
+    const teacherLoginForm = document.getElementById('teacherLoginForm');
+    const teacherSignupForm = document.getElementById('teacherSignupForm');
+
+    const dashTeacherGreeting = document.getElementById('dashTeacherGreeting');
+    const dashTeacherEmail = document.getElementById('dashTeacherEmail');
+    const dashSchoolLabel = document.getElementById('dashSchoolLabel');
+    const kpiRosterCount = document.getElementById('kpiRosterCount');
+    const kpiAvgLevel = document.getElementById('kpiAvgLevel');
+    const kpiFocusBiome = document.getElementById('kpiFocusBiome');
+
+    const focusBiomeSelect = document.getElementById('focusBiomeSelect');
+    const targetXpInput = document.getElementById('targetXpInput');
+    const sessionNoteInput = document.getElementById('sessionNoteInput');
+    const addScholarForm = document.getElementById('addScholarForm');
+    const rosterTableBody = document.getElementById('rosterTableBody');
+    const saveDashboardBtn = document.getElementById('saveDashboardBtn');
+    const rosterSyncStatus = document.getElementById('rosterSyncStatus');
+    const printStudentLoginsBtn = document.getElementById('printStudentLoginsBtn');
+    const printCardsGrid = document.getElementById('printCardsGrid');
+    const printSheetTitle = document.getElementById('printSheetTitle');
+    const printSheetMeta = document.getElementById('printSheetMeta');
+    const printPortalUrl = document.getElementById('printPortalUrl');
+    const printTargetGoal = document.getElementById('printTargetGoal');
+    const printSessionNote = document.getElementById('printSessionNote');
+
+    let currentTeacherUser = null;
+    let teacherData = {
+      name: 'Teacher',
+      school: 'MathLand Academy',
+      gradeBand: 'Grades 1–3 (Arithmetic)',
+      focusBiome: 'Arithmetic Meadows',
+      targetXp: 150,
+      sessionNote: 'Solve runes to earn XP & coins, and remember to click Save Progress before leaving!',
+      roster: []
+    };
+
+    function showBanner(msg, type = 'info') {
+      portalBanner.textContent = msg;
+      portalBanner.classList.remove(
+        'hidden',
+        'bg-rose-950/85', 'border-rose-500/50', 'text-rose-200',
+        'bg-emerald-950/85', 'border-emerald-500/50', 'text-emerald-200',
+        'bg-cyan-950/85', 'border-cyan-500/50', 'text-cyan-200'
+      );
+      if (type === 'error') {
+        portalBanner.classList.add('bg-rose-950/85', 'border-rose-500/50', 'text-rose-200');
+      } else if (type === 'success') {
+        portalBanner.classList.add('bg-emerald-950/85', 'border-emerald-500/50', 'text-emerald-200');
+      } else {
+        portalBanner.classList.add('bg-cyan-950/85', 'border-cyan-500/50', 'text-cyan-200');
+      }
+    }
+
+    function clearBanner() {
+      portalBanner.classList.add('hidden');
+    }
+
+    function formatAuthError(code) {
+      switch (code) {
+        case 'auth/email-already-in-use':
+          return 'That email is already registered. Try logging in instead.';
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+        case 'auth/user-not-found':
+          return 'Invalid email or password.';
+        case 'auth/weak-password':
+          return 'Password must be at least 6 characters.';
+        case 'auth/popup-closed-by-user':
+          return 'Google sign-in popup was closed before finishing.';
+        case 'auth/popup-blocked':
+          return 'Pop-up blocked by browser. Please allow pop-ups and try again.';
+        default:
+          return `Authentication error (${code || 'unknown'}).`;
+      }
+    }
+
+    // Tab Switcher
+    teacherTabLogin.addEventListener('click', () => {
+      clearBanner();
+      teacherTabLogin.className = 'py-2.5 text-xs sm:text-sm font-bold rounded-xl bg-cyan-600 text-white shadow transition';
+      teacherTabSignup.className = 'py-2.5 text-xs sm:text-sm font-bold rounded-xl text-slate-400 hover:text-white transition';
+      teacherLoginForm.classList.remove('hidden');
+      teacherSignupForm.classList.add('hidden');
+    });
+
+    teacherTabSignup.addEventListener('click', () => {
+      clearBanner();
+      teacherTabSignup.className = 'py-2.5 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 text-white shadow transition';
+      teacherTabLogin.className = 'py-2.5 text-xs sm:text-sm font-bold rounded-xl text-slate-400 hover:text-white transition';
+      teacherSignupForm.classList.remove('hidden');
+      teacherLoginForm.classList.add('hidden');
+    });
+
+    // Login Submit
+    teacherLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearBanner();
+      const email = document.getElementById('teacherLoginEmail').value.trim();
+      const password = document.getElementById('teacherLoginPassword').value;
+      const btn = document.getElementById('teacherLoginBtn');
+      btn.disabled = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+        showBanner(formatAuthError(err.code), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Signup Submit
+    teacherSignupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearBanner();
+      const name = document.getElementById('teacherFullName').value.trim() || 'Teacher';
+      const school = document.getElementById('teacherSchoolName').value.trim() || 'MathLand Academy';
+      const gradeBand = document.getElementById('teacherGradeBand').value;
+      const email = document.getElementById('teacherSignupEmail').value.trim();
+      const password = document.getElementById('teacherSignupPassword').value;
+      const btn = document.getElementById('teacherSignupBtn');
+      btn.disabled = true;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName: name });
+        const docRef = doc(db, 'artifacts', appId, 'users', cred.user.uid, 'teacherPortal', 'dashboard');
+        await setDoc(docRef, {
+          uid: cred.user.uid,
+          role: 'teacher',
+          name,
+          school,
+          gradeBand,
+          email,
+          focusBiome: 'Arithmetic Meadows',
+          targetXp: 150,
+          sessionNote: 'Solve runes to earn XP & coins, and remember to click Save Progress before leaving!',
+          roster: [],
+          updatedAt: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        showBanner(formatAuthError(err.code), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Google Sign-In
+    document.getElementById('teacherGoogleBtn').addEventListener('click', async () => {
+      clearBanner();
+      const btn = document.getElementById('teacherGoogleBtn');
+      btn.disabled = true;
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (err) {
+        showBanner(formatAuthError(err.code), 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Sign Out
+    headerSignOutBtn.addEventListener('click', async () => {
+      clearBanner();
+      await signOut(auth);
+    });
+
+    // Roster & Dashboard Rendering
+    function renderDashboard() {
+      dashTeacherGreeting.textContent = `Welcome, ${teacherData.name}`;
+      dashTeacherEmail.textContent = currentTeacherUser?.email ? `Signed in as ${currentTeacherUser.email}` : '';
+      dashSchoolLabel.textContent = `${teacherData.school} • ${teacherData.gradeBand}`;
+
+      focusBiomeSelect.value = teacherData.focusBiome || 'Arithmetic Meadows';
+      targetXpInput.value = Number(teacherData.targetXp) || 150;
+      sessionNoteInput.value = teacherData.sessionNote || '';
+      kpiFocusBiome.textContent = focusBiomeSelect.value;
+
+      const roster = Array.isArray(teacherData.roster) ? teacherData.roster : [];
+      kpiRosterCount.textContent = String(roster.length);
+      renderPrintableLoginCards();
+      if (roster.length === 0) {
+        kpiAvgLevel.textContent = '1.0';
+      } else {
+        const totalLvl = roster.reduce((acc, s) => acc + (Number(s.level) || 1), 0);
+        kpiAvgLevel.textContent = (totalLvl / roster.length).toFixed(1);
+      }
+
+      rosterTableBody.innerHTML = '';
+      if (roster.length === 0) {
+        rosterTableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-6 text-center text-slate-400 text-xs sm:text-sm">
+              No scholars on your roster yet. Use <strong>Add Scholar to Roster</strong> on the left to get started.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      roster.forEach((student, idx) => {
+        const goalXp = Math.max(10, Number(targetXpInput.value) || 150);
+        const curXp = Math.max(0, Number(student.xp) || 0);
+        const pct = Math.min(100, Math.round((curXp / goalXp) * 100));
+        const gradeLabel = student.grade || '1st Grade';
+        const displayLabel = student.firstName && student.lastInitial
+          ? `${escapeHtml(student.firstName)} ${escapeHtml(student.lastInitial)}.`
+          : escapeHtml(student.username);
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-950/50 transition';
+        tr.innerHTML = `
+          <td class="py-3 pr-3">
+            <div class="font-bold text-white">${displayLabel}</div>
+            <div class="text-[11px] font-mono text-cyan-300">@${escapeHtml(student.username)} • Lvl ${Number(student.level) || 1}</div>
+          </td>
+          <td class="py-3 px-2 whitespace-nowrap">
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 text-xs font-bold">
+              ${escapeHtml(gradeLabel)}
+            </span>
+          </td>
+          <td class="py-3 px-2 min-w-[150px]">
+            <div class="flex items-center justify-between text-[11px] text-slate-300 mb-1">
+              <span>${curXp} / ${goalXp} XP</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-cyan-400 transition-all" style="width: ${pct}%"></div>
+            </div>
+          </td>
+          <td class="py-3 pl-2 text-right whitespace-nowrap space-x-1.5">
+            <button type="button" data-xp-add="${idx}" title="+25 XP"
+              class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-400/30 text-xs font-bold transition">
+              +25 XP
+            </button>
+            <button type="button" data-remove-idx="${idx}" title="Remove"
+              class="px-2.5 py-1 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-200 border border-rose-500/30 text-xs font-bold transition">
+              ✕
+            </button>
+          </td>
+        `;
+
+        tr.querySelector(`[data-xp-add="${idx}"]`).addEventListener('click', () => {
+          const updatedXp = (Number(teacherData.roster[idx].xp) || 0) + 25;
+          let updatedLvl = Number(teacherData.roster[idx].level) || 1;
+          const xpForLevel = updatedLvl * 100;
+          let finalXp = updatedXp;
+          if (finalXp >= xpForLevel) {
+            finalXp -= xpForLevel;
+            updatedLvl += 1;
+          }
+          teacherData.roster[idx].xp = finalXp;
+          teacherData.roster[idx].level = updatedLvl;
+          renderDashboard();
+          persistTeacherDashboard({ silent: true });
+        });
+
+        tr.querySelector(`[data-remove-idx="${idx}"]`).addEventListener('click', () => {
+          teacherData.roster.splice(idx, 1);
+          renderDashboard();
+          persistTeacherDashboard({ silent: true });
+        });
+
+        rosterTableBody.appendChild(tr);
+      });
+    }
+
+    focusBiomeSelect.addEventListener('change', () => {
+      teacherData.focusBiome = focusBiomeSelect.value;
+      kpiFocusBiome.textContent = teacherData.focusBiome;
+    });
+
+    targetXpInput.addEventListener('input', () => {
+      teacherData.targetXp = Math.max(10, Number(targetXpInput.value) || 150);
+      renderDashboard();
+    });
+
+    sessionNoteInput.addEventListener('input', () => {
+      teacherData.sessionNote = sessionNoteInput.value;
+    });
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderPrintableLoginCards() {
+      if (!printCardsGrid) return;
+      const roster = Array.isArray(teacherData.roster) ? teacherData.roster : [];
+      const portalHref = `${window.location.origin}/index.html`;
+      const activeBiome = focusBiomeSelect.value || teacherData.focusBiome || 'Arithmetic Meadows';
+      const goalXp = Math.max(10, Number(targetXpInput.value) || Number(teacherData.targetXp) || 150);
+      const noteText = (sessionNoteInput.value || teacherData.sessionNote || '').trim();
+
+      printSheetTitle.textContent = `${escapeHtml(teacherData.school)} — Student Login Cards`;
+      printSheetMeta.textContent = `Teacher: ${teacherData.name} • ${teacherData.gradeBand} • Biome: ${activeBiome}`;
+      printPortalUrl.textContent = portalHref;
+      printTargetGoal.textContent = `${goalXp} XP (${activeBiome})`;
+
+      if (noteText) {
+        printSessionNote.classList.remove('hidden');
+        printSessionNote.textContent = `Class Note: ${noteText}`;
+      } else {
+        printSessionNote.classList.add('hidden');
+      }
+
+      if (roster.length === 0) {
+        printCardsGrid.innerHTML = `
+          <div class="col-span-full border border-dashed border-slate-400 rounded-xl p-6 text-center text-sm text-slate-700">
+            No scholars on your roster yet. Add students on the dashboard before printing login cards.
+          </div>
+        `;
+        return;
+      }
+
+      printCardsGrid.innerHTML = roster.map((student) => {
+        const safeName = escapeHtml(student.username);
+        const studentLabel = student.firstName && student.lastInitial
+          ? `${escapeHtml(student.firstName)} ${escapeHtml(student.lastInitial)}.`
+          : safeName;
+        const gradeLabel = escapeHtml(student.grade || '1st Grade');
+        return `
+          <div class="border-2 border-dashed border-slate-700 rounded-xl p-4 bg-white text-slate-900 break-inside-avoid space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-base">🧮 MathLand Scholar Pass</span>
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 border border-slate-300">${gradeLabel}</span>
+            </div>
+            <div class="text-sm"><strong>Student:</strong> ${studentLabel} • <strong>Username:</strong> <span class="font-mono font-bold">${safeName}</span></div>
+            <div class="text-xs text-slate-700"><strong>Sign-In:</strong> Enter your Scholar Email &amp; Password (or Google) at <span class="font-mono">${escapeHtml(portalHref)}</span></div>
+            <div class="text-xs text-slate-700"><strong>Focus Biome:</strong> ${escapeHtml(activeBiome)} • <strong>Goal:</strong> ${goalXp} XP</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (printStudentLoginsBtn) {
+      printStudentLoginsBtn.addEventListener('click', () => {
+        const roster = Array.isArray(teacherData.roster) ? teacherData.roster : [];
+        if (roster.length === 0) {
+          showBanner('Add at least one scholar to your roster first to print student login cards.', 'error');
+          return;
+        }
+        renderPrintableLoginCards();
+        window.print();
+      });
+    }
+
+    addScholarForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const rawFirst = document.getElementById('scholarFirstNameInput').value.trim().replace(/[^a-zA-Z]/g, '');
+      const rawLastInit = document.getElementById('scholarLastInitialInput').value.trim().replace(/[^a-zA-Z]/g, '');
+      const grade = document.getElementById('scholarGradeSelect').value || '1st Grade';
+
+      if (!rawFirst) {
+        showBanner('Please enter the student\'s first name.', 'error');
+        return;
+      }
+      if (!rawLastInit) {
+        showBanner('Please enter the student\'s last initial.', 'error');
+        return;
+      }
+
+      const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1).toLowerCase();
+      const lastInitial = rawLastInit.charAt(0).toUpperCase();
+      const suffix = Math.floor(1000 + Math.random() * 9000);
+      const username = `${firstName}${lastInitial}${suffix}`.slice(0, 24);
+      const level = 1;
+      const xp = 0;
+
+      teacherData.roster.push({ username, firstName, lastInitial, grade, level, xp });
+      document.getElementById('scholarFirstNameInput').value = '';
+      document.getElementById('scholarLastInitialInput').value = '';
+      renderDashboard();
+      persistTeacherDashboard({ successMessage: `✅ Added ${firstName} ${lastInitial}. (${grade}) and saved roster!` });
+    });
+
+    async function persistTeacherDashboard(options = {}) {
+      const { silent = false, successMessage = '✅ Classroom plan & roster saved!' } = options;
+      if (!currentTeacherUser) {
+        showBanner('⚠️ Please sign in to save your roster.', 'error');
+        return false;
+      }
+      saveDashboardBtn.disabled = true;
+      saveDashboardBtn.textContent = 'Saving...';
+      try {
+        teacherData.focusBiome = focusBiomeSelect.value;
+        teacherData.targetXp = Math.max(10, Number(targetXpInput.value) || 150);
+        teacherData.sessionNote = sessionNoteInput.value.trim();
+
+        const normalizedRoster = (Array.isArray(teacherData.roster) ? teacherData.roster : []).map((s) => ({
+          username: String(s.username || '').trim(),
+          firstName: String(s.firstName || '').trim(),
+          lastInitial: String(s.lastInitial || '').trim().toUpperCase().slice(0, 1),
+          grade: String(s.grade || '1st Grade').trim(),
+          level: Math.max(1, Math.min(999, Number(s.level) || 1)),
+          xp: Math.max(0, Number(s.xp) || 0)
+        })).filter((s) => s.username.length > 0);
+        teacherData.roster = normalizedRoster;
+
+        const docRef = doc(db, 'artifacts', appId, 'users', currentTeacherUser.uid, 'teacherPortal', 'dashboard');
+        await setDoc(docRef, {
+          uid: currentTeacherUser.uid,
+          role: 'teacher',
+          name: teacherData.name,
+          school: teacherData.school,
+          gradeBand: teacherData.gradeBand,
+          email: currentTeacherUser.email || teacherData.email || '',
+          focusBiome: teacherData.focusBiome,
+          targetXp: teacherData.targetXp,
+          sessionNote: teacherData.sessionNote,
+          roster: teacherData.roster,
+          updatedAt: Date.now()
+        }, { merge: true });
+
+        if (!silent) {
+          showBanner(successMessage, 'success');
+        }
+        return true;
+      } catch (err) {
+        console.error('Error saving teacher dashboard:', err);
+        showBanner('⚠️ Could not save classroom plan. Check Firestore rules or connection.', 'error');
+        return false;
+      } finally {
+        saveDashboardBtn.disabled = false;
+        saveDashboardBtn.textContent = '💾 Save Classroom Plan';
+      }
+    }
+
+    saveDashboardBtn.addEventListener('click', async () => {
+      await persistTeacherDashboard({ successMessage: '✅ Classroom plan & roster saved!' });
+    });
+
+    // Auth Listener
+    onAuthStateChanged(auth, async (user) => {
+      currentTeacherUser = user;
+      if (!user) {
+        headerSignOutBtn.classList.add('hidden');
+        teacherDashboardSection.classList.add('hidden');
+        teacherAuthSection.classList.remove('hidden');
+        return;
+      }
+
+      headerSignOutBtn.classList.remove('hidden');
+      teacherAuthSection.classList.add('hidden');
+      teacherDashboardSection.classList.remove('hidden');
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'teacherPortal', 'dashboard');
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const saved = snap.data();
+          teacherData = {
+            name: saved.name || user.displayName || 'Teacher',
+            school: saved.school || 'MathLand Academy',
+            gradeBand: saved.gradeBand || 'Grades 1–3 (Arithmetic)',
+            email: user.email || saved.email || '',
+            focusBiome: saved.focusBiome || 'Arithmetic Meadows',
+            targetXp: Number(saved.targetXp) || 150,
+            sessionNote: saved.sessionNote || '',
+            roster: Array.isArray(saved.roster) ? saved.roster : []
+          };
+        } else {
+          teacherData = {
+            name: user.displayName || 'Teacher',
+            school: 'MathLand Academy',
+            gradeBand: 'Grades 1–3 (Arithmetic)',
+            email: user.email || '',
+            focusBiome: 'Arithmetic Meadows',
+            targetXp: 150,
+            sessionNote: 'Solve runes to earn XP & coins, and remember to click Save Progress before leaving!',
+            roster: []
+          };
+          await setDoc(docRef, {
+            ...teacherData,
+            uid: user.uid,
+            role: 'teacher',
+            updatedAt: Date.now()
+          }, { merge: true });
+        }
+        renderDashboard();
+      } catch (err) {
+        console.error('Error loading teacher dashboard:', err);
+        showBanner('Failed to load teacher dashboard data.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
